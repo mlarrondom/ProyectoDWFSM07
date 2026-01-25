@@ -1,0 +1,233 @@
+:root {
+  /* Colors */
+  --ds-primary: #006699;
+  --ds-secondary: #00cc99;
+  --ds-cta: #ff6600;
+
+  --ds-text: #333333;
+  --ds-bg: #ffffff;
+
+  /* States */
+  --ds-success: #198754; /* bootstrap success base */
+  --ds-danger: #dc3545;  /* bootstrap danger base */
+
+  /* Shape & typography */
+  --ds-radius: 8px;
+  --ds-font: "Ubuntu", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+body {
+  font-family: var(--ds-font);
+  color: var(--ds-text);
+  background: var(--ds-bg);
+}
+
+/* -------------------------
+   Buttons (Bootstrap overrides)
+-------------------------- */
+.btn {
+  border-radius: var(--ds-radius);
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: var(--ds-primary);
+  border-color: var(--ds-primary);
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  filter: brightness(0.92);
+  background-color: var(--ds-primary);
+  border-color: var(--ds-primary);
+}
+
+.btn-secondary {
+  background-color: var(--ds-secondary);
+  border-color: var(--ds-secondary);
+  color: #fff;
+}
+.btn-secondary:hover,
+.btn-secondary:focus {
+  filter: brightness(0.92);
+  background-color: var(--ds-secondary);
+  border-color: var(--ds-secondary);
+  color: #fff;
+}
+
+/* CTA custom button */
+.btn-cta {
+  background-color: var(--ds-cta);
+  border-color: var(--ds-cta);
+  color: #fff;
+}
+.btn-cta:hover,
+.btn-cta:focus {
+  filter: brightness(0.92);
+  background-color: var(--ds-cta);
+  border-color: var(--ds-cta);
+  color: #fff;
+}
+
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.55;
+}
+
+/* -------------------------
+   Navbar
+-------------------------- */
+.navbar.ds-navbar {
+  background-color: var(--ds-primary) !important;
+}
+.navbar.ds-navbar .navbar-brand,
+.navbar.ds-navbar .nav-link,
+.navbar.ds-navbar .navbar-text {
+  color: #fff !important;
+}
+
+/* -------------------------
+   Forms (Bootstrap overrides)
+-------------------------- */
+.form-control,
+.form-select {
+  border-radius: var(--ds-radius);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--ds-primary);
+  box-shadow: 0 0 0 0.2rem rgba(0, 102, 153, 0.2);
+}
+
+/* Optional: show “success” and “error” styles */
+.is-valid {
+  border-color: var(--ds-success) !important;
+}
+.is-valid:focus {
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.2) !important;
+}
+
+.is-invalid {
+  border-color: var(--ds-danger) !important;
+}
+.is-invalid:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.2) !important;
+}
+
+/* Cards: subtle rounding consistent */
+.card {
+  border-radius: var(--ds-radius);
+}
+
+/* Layout */
+.ds-page {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+/* Cards / Panels */
+.ds-card {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--ds-radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+/* Inputs (más “enterprise”) */
+.form-control,
+.form-select {
+  height: 48px;
+  padding: 10px 14px;
+  font-size: 16px;
+}
+
+.form-label {
+  font-size: 14px;
+  color: rgba(51,51,51,0.75);
+  margin-bottom: 6px;
+}
+
+/* Buttons */
+.btn {
+  height: 44px;
+  padding: 0 18px;
+}
+
+/* CTA: más “pill” como tu ejemplo */
+.btn-cta {
+  border-radius: 12px;
+}
+
+/* Tables */
+.table thead th {
+  font-weight: 700;
+}
+
+/* Modal look */
+.modal-content {
+  border-radius: var(--ds-radius);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  border: 0;
+}
+.modal-header {
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.modal-footer {
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Layout */
+.ds-page {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+/* Cards / Panels */
+.ds-card {
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--ds-radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+/* Inputs (más “enterprise”) */
+.form-control,
+.form-select {
+  height: 48px;
+  padding: 10px 14px;
+  font-size: 16px;
+}
+
+.form-label {
+  font-size: 14px;
+  color: rgba(51,51,51,0.75);
+  margin-bottom: 6px;
+}
+
+/* Buttons */
+.btn {
+  height: 44px;
+  padding: 0 18px;
+}
+
+/* CTA: más “pill” como tu ejemplo */
+.btn-cta {
+  border-radius: 12px;
+}
+
+/* Tables */
+.table thead th {
+  font-weight: 700;
+}
+
+/* Modal look */
+.modal-content {
+  border-radius: var(--ds-radius);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  border: 0;
+}
+.modal-header {
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.modal-footer {
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
