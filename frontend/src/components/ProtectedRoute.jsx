@@ -2,10 +2,11 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function ProtectedRoute({ children }) {
-  const { token, loading } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (loading) return <p style={{ padding: 20 }}>Cargando sesión...</p>;
-  if (!token) return <Navigate to="/login" replace />;
+  if (loading) return <div className="container my-4">Cargando sesión...</div>;
+
+  if (!user) return <Navigate to="/login" replace />;
 
   return children;
 }

@@ -1,184 +1,234 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import Modal from "../components/Modal";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function CertificationsList() {
-  const { token } = useAuth();
+  const API = import.meta.env.VITE_API_URL;
+  const { token, user } = useAuth();
+
+  const role = user?.role || user?.user?.role || "-";
 
   const [certifications, setCertifications] = useState([]);
-  const [error, setError] = useState("");
+  const [filterName, setFilterName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [msgError, setMsgError] = useState("");
 
-  // modal
-  const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
-    certCode: "",
-    name: "",
-    campus: "Santiago",
-    ownerUnit: "",
-  });
-  const [saving, setSaving] = useState(false);
-  const [msg, setMsg] = useState("");
+  // Modal (ver)
+  const [selectedCert, setSelectedCert] = useState(null);
 
-  const load = async () => {
-    setError("");
-    const res = await fetch(`${API}/api/certifications`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.msg || "Error cargando certificaciones");
-      return;
-    }
-    setCertifications(data.certifications || []);
-  };
-
+  // ====== GET al cargar ======
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+    if (!token) return;
 
-  const onChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+    const fetchCerts = async () => {
+      try {
+        setLoading(true);
+        setMsgError("");
 
-  const createCertification = async () => {
-    setMsg("");
-    setError("");
+        const res = await fetch(`${API}/api/certifications`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-    // validación mínima
-    if (!form.certCode || !form.name || !form.campus || !form.ownerUnit) {
-      setError("Completa todos los campos.");
-      return;
-    }
+        const data = await res.json();
 
-    setSaving(true);
-    try {
-      const res = await fetch(`${API}/api/certifications`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          certCode: Number(form.certCode),
-          name: form.name,
-          campus: form.campus,
-          ownerUnit: form.ownerUnit,
-        }),
-      });
+        if (!res.ok) {
+          throw new Error(data?.msg || "No se pudieron cargar certificaciones");
+        }
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.msg || "Error creando certificación");
-        setSaving(false);
-        return;
+        setCertifications(data?.certifications || []);
+      } catch (err) {
+        setMsgError(err.message || "Error al cargar certificaciones");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setMsg("Certificación creada ✅");
-      setOpen(false);
-      setForm({ certCode: "", name: "", campus: "Santiago", ownerUnit: "" });
-      await load();
-    } catch {
-      setError("Error de conexión");
-    } finally {
-      setSaving(false);
-    }
+    fetchCerts();
+  }, [API, token]);
+
+  // ====== Filtro por nombre ======
+  const filtered = useMemo(() => {
+    const q = filterName.trim().toLowerCase();
+    if (!q) return certifications;
+
+    return certifications.filter((c) =>
+      String(c.name ?? "").toLowerCase().includes(q)
+    );
+  }, [certifications, filterName]);
+
+  // ====== Abrir modal ======
+  const openViewModal = (cert) => {
+    setSelectedCert(cert);
   };
+
+  const closeModal = () => setSelectedCert(null);
 
   return (
-    <div className="ds-page">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="m-0">Certificaciones</h2>
-
-        <div className="d-flex gap-2">
-          <button className="btn btn-cta" onClick={() => setOpen(true)}>
-            Agregar nuevo
-          </button>
+    <div className="container py-2">
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <div>
+          <h2 className="m-0" style={{ color: "#006699" }}>
+            Certificaciones (Admin)
+          </h2>
+          <small className="text-muted">Rol: {role}</small>
         </div>
+
+        <input
+          className="form-control"
+          style={{ maxWidth: 360, borderRadius: 8 }}
+          placeholder="Filtrar por nombre..."
+          value={filterName}
+          onChange={(e) => setFilterName(e.target.value)}
+        />
       </div>
 
-      {msg && <div className="alert alert-success">{msg}</div>}
-      {error && <div className="alert alert-danger">{error}</div>}
+      {msgError && <div className="alert alert-danger">{msgError}</div>}
 
-      <div className="row g-3">
-        {certifications.map((cert) => (
-          <div className="col-12 col-md-6 col-lg-4" key={cert.certCode}>
-            <div className="card ds-card h-100">
-              <div className="card-body">
-                <h5 className="card-title">{cert.name}</h5>
-                <p className="card-text mb-1">
-                  <strong>Campus:</strong> {cert.campus}
-                </p>
-                <p className="card-text">
-                  <strong>Unidad:</strong> {cert.ownerUnit}
-                </p>
+      {loading ? (
+        <div className="alert alert-info">Cargando certificaciones...</div>
+      ) : (
+        <>
+          <div className="mb-2 text-muted">
+            Mostrando <b>{filtered.length}</b> de <b>{certifications.length}</b>
+          </div>
 
-                <Link className="btn btn-primary" to={`/certifications/${cert.certCode}`}>
-                  Ver detalle
-                </Link>
+          {filtered.length === 0 ? (
+            <div className="alert alert-secondary">
+              No hay certificaciones para mostrar.
+            </div>
+          ) : (
+            <table className="table table-hover align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Campus</th>
+                  <th className="text-end">Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {filtered.map((c) => (
+                  <tr key={c._id || c.certCode}>
+                    <td>
+                      <strong>{c.certCode}</strong>
+                    </td>
+
+                    <td style={{ color: "#006699", fontWeight: 600 }}>
+                      {c.name}
+                    </td>
+
+                    <td>{c.campus || "-"}</td>
+
+                    <td className="text-end">
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() => openViewModal(c)}
+                        title="Ver certificación"
+                      >
+                        👁
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </>
+      )}
+
+      {/* ===== MODAL (overlay simple) ===== */}
+      {selectedCert && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={closeModal}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.45)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+            zIndex: 9999,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 720,
+              background: "white",
+              borderRadius: 8,
+              boxShadow: "0 16px 40px rgba(0,0,0,0.2)",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                padding: 16,
+                background: "#006699",
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div style={{ fontWeight: 700 }}>
+                Certificación {selectedCert.certCode}
+              </div>
+              <button className="btn btn-sm btn-light" onClick={closeModal}>
+                ✕
+              </button>
+            </div>
+
+            <div style={{ padding: 16 }}>
+              <div className="mb-2">
+                <div className="text-muted" style={{ fontSize: 12 }}>
+                  Nombre
+                </div>
+                <div style={{ fontWeight: 700 }}>{selectedCert.name}</div>
+              </div>
+
+              <div className="row g-2">
+                <div className="col-6">
+                  <div className="text-muted" style={{ fontSize: 12 }}>
+                    Campus
+                  </div>
+                  <div style={{ fontWeight: 600 }}>
+                    {selectedCert.campus || "-"}
+                  </div>
+                </div>
+
+                <div className="col-6">
+                  <div className="text-muted" style={{ fontSize: 12 }}>
+                    Unidad
+                  </div>
+                  <div style={{ fontWeight: 600 }}>
+                    {selectedCert.ownerUnit || "-"}
+                  </div>
+                </div>
+              </div>
+
+              <div className="d-flex gap-2 mt-4">
+                <button
+                  className="btn btn-outline-primary"
+                  onClick={() => alert("Siguiente paso: editar info general")}
+                >
+                  ✏️ Editar información
+                </button>
+
+                <button
+                  className="btn btn-outline-secondary"
+                  onClick={() => alert("Siguiente paso: editar requerimientos")}
+                >
+                  📋 Editar requerimientos
+                </button>
               </div>
             </div>
           </div>
-        ))}
-      </div>
-
-      <Modal title="Nueva Certificación" open={open} onClose={() => setOpen(false)}>
-        <div className="row g-3 mt-1">
-          <div className="col-md-4">
-            <label className="form-label">Código</label>
-            <input
-              className="form-control"
-              name="certCode"
-              value={form.certCode}
-              onChange={onChange}
-              placeholder="Ej: 2001"
-            />
-          </div>
-
-          <div className="col-md-8">
-            <label className="form-label">Nombre</label>
-            <input
-              className="form-control"
-              name="name"
-              value={form.name}
-              onChange={onChange}
-              placeholder="Nombre de la certificación"
-            />
-          </div>
-
-          <div className="col-md-6">
-            <label className="form-label">Campus</label>
-            <select className="form-select" name="campus" value={form.campus} onChange={onChange}>
-              <option value="Santiago">Santiago</option>
-              <option value="Concepción">Concepción</option>
-            </select>
-          </div>
-
-          <div className="col-md-6">
-            <label className="form-label">Unidad</label>
-            <input
-              className="form-control"
-              name="ownerUnit"
-              value={form.ownerUnit}
-              onChange={onChange}
-              placeholder="Facultad / Unidad"
-            />
-          </div>
         </div>
-
-        <div className="d-flex justify-content-end gap-2 mt-3">
-          <button className="btn btn-outline-secondary" onClick={() => setOpen(false)} disabled={saving}>
-            Cancelar
-          </button>
-          <button className="btn btn-primary" onClick={createCertification} disabled={saving}>
-            {saving ? "Guardando..." : "Guardar"}
-          </button>
-        </div>
-      </Modal>
+      )}
     </div>
   );
 }
