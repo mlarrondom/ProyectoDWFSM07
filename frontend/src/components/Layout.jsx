@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
@@ -7,11 +7,15 @@ const INTERNAL_ROLES = ["admin", "sede_santiago", "sede_concepcion"];
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const role = user?.user?.role || user?.role || "-";
   const name = user?.user?.name || user?.name || "Usuario";
   const isLogged = !!user;
   const isInternalUser = INTERNAL_ROLES.includes(role);
+
+  // ✅ Admin pages: full width
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   const [openMaintainers, setOpenMaintainers] = useState(false);
   const [openUserMenu, setOpenUserMenu] = useState(false);
@@ -34,6 +38,12 @@ export default function Layout({ children }) {
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
+
+  // Cierra dropdown mantenedores cuando cambias de ruta
+  useEffect(() => {
+    setOpenMaintainers(false);
+    setOpenUserMenu(false);
+  }, [location.pathname]);
 
   const navLinkStyle = ({ isActive }) => ({
     color: "#333333",
@@ -79,7 +89,8 @@ export default function Layout({ children }) {
   return (
     <>
       <nav style={{ background: "#ffffff", borderBottom: "1px solid #e5e7eb" }}>
-        <div className="container d-flex align-items-center justify-content-between py-2">
+        {/* ✅ FIX: container-fluid (antes estaba "container fluid") */}
+        <div className="container-fluid d-flex align-items-center justify-content-between py-2">
           {/* Brand */}
           <Link
             to="/"
@@ -246,7 +257,7 @@ export default function Layout({ children }) {
         </div>
       </nav>
 
-      <main className="container my-4">{children}</main>
+      <main className="container-xxl my-4">{children}</main>
     </>
   );
 }

@@ -93,12 +93,7 @@ export default function CertificationsList() {
     <div className="ds-page">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 className="m-0">Certificaciones</h2>
-
-        <div className="d-flex gap-2">
-          <button className="btn btn-cta" onClick={() => setOpen(true)}>
-            Agregar nuevo
-          </button>
-        </div>
+        
       </div>
 
       {msg && <div className="alert alert-success">{msg}</div>}

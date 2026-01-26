@@ -242,7 +242,7 @@ export default function CoursesList() {
       <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
         <div>
           <h2 className="m-0" style={{ color: "#006699" }}>
-            Cursos (Admin)
+            Cursos - Mantenedor
           </h2>
           <small className="text-muted">Gestión de cursos</small>
         </div>
@@ -261,7 +261,7 @@ export default function CoursesList() {
             style={{ background: "#FF6600", color: "white", borderRadius: 8 }}
             onClick={openCreateModal}
           >
-            + Agregar curso
+            Agregar
           </button>
         </div>
       </div>

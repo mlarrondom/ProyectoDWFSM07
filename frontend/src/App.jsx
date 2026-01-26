@@ -8,7 +8,7 @@ import Login from "./pages/Login.jsx";
 import Catalog from "./pages/Catalog.jsx";
 
 import CertificationsAdmin from "./pages/CertificationsList.jsx";
-import CertificationDetail from "./pages/CertificationsDetail.jsx";
+import CertificationsDetail from "./pages/CertificationsDetail.jsx";
 import CoursesList from "./pages/CoursesList.jsx";
 
 // Placeholder simple para no romper el link del navbar
@@ -57,10 +57,10 @@ function App() {
           />
 
           <Route
-            path="/catalog/:certCode"
+            path="/admin/certifications/:certCode"
             element={
               <Layout>
-                <CertificationDetail />
+                <CertificationsDetail />
               </Layout>
             }
           />
@@ -81,17 +81,6 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <CertificationsAdmin />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/certifications/:certCode"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <CertificationDetail />
                 </Layout>
               </ProtectedRoute>
             }
