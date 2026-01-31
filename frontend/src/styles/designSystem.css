@@ -1,355 +1,146 @@
 :root {
-  /* Colors */
-  --ds-primary: #006699;
-  --ds-secondary: #00cc99;
-  --ds-cta: #ff6600;
-
-  --ds-text: #333333;
-  --ds-bg: #ffffff;
+  /* Colors - Cyber Teal Palette */
+  --ds-primary: #0d9488;      /* Electric Teal */
+  --ds-primary-dark: #0f172a; /* Deep Space (Texto y Dark elements) */
+  --ds-cta: #2dd4bf;         /* Mint Spark */
+  --ds-cta-hover: #14b8a6;
+  
+  --ds-text-main: #1e293b;    /* Slate 800 */
+  --ds-text-muted: #64748b;   /* Slate 500 */
+  --ds-bg: #f8fafc;           /* Soft Slate */
+  --ds-white: #ffffff;
 
   /* States */
-  --ds-success: #198754; /* bootstrap success base */
-  --ds-danger: #dc3545;  /* bootstrap danger base */
+  --ds-success: #10b981;
+  --ds-danger: #f43f5e;
 
-  /* Shape & typography */
-  --ds-radius: 8px;
-  --ds-font: "Ubuntu", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  /* Shape & Shadow */
+  --ds-radius: 12px;
+  --ds-radius-sm: 8px;
+  --ds-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
+  --ds-font: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 body {
   font-family: var(--ds-font);
-  color: var(--ds-text);
+  color: var(--ds-text-main);
   background: var(--ds-bg);
+  line-height: 1.6;
 }
 
 /* -------------------------
-   Buttons (Bootstrap overrides)
+   Buttons (Modern UI)
 -------------------------- */
 .btn {
-  border-radius: var(--ds-radius);
-  font-weight: 500;
+  border-radius: var(--ds-radius-sm);
+  font-weight: 600;
+  padding: 12px 24px;
+  transition: all 0.2s ease;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-primary {
   background-color: var(--ds-primary);
-  border-color: var(--ds-primary);
-}
-.btn-primary:hover,
-.btn-primary:focus {
-  filter: brightness(0.92);
-  background-color: var(--ds-primary);
-  border-color: var(--ds-primary);
+  color: white;
 }
 
-.btn-secondary {
-  background-color: var(--ds-secondary);
-  border-color: var(--ds-secondary);
-  color: #fff;
-}
-.btn-secondary:hover,
-.btn-secondary:focus {
-  filter: brightness(0.92);
-  background-color: var(--ds-secondary);
-  border-color: var(--ds-secondary);
-  color: #fff;
+.btn-primary:hover {
+  background-color: #0b7a70;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
 }
 
-/* CTA custom button */
 .btn-cta {
   background-color: var(--ds-cta);
-  border-color: var(--ds-cta);
-  color: #fff;
-}
-.btn-cta:hover,
-.btn-cta:focus {
-  filter: brightness(0.92);
-  background-color: var(--ds-cta);
-  border-color: var(--ds-cta);
-  color: #fff;
+  color: var(--ds-primary-dark);
+  border-radius: 50px; /* Pill shape para resaltar */
 }
 
-.btn:disabled,
-.btn.disabled {
-  opacity: 0.55;
+.btn-cta:hover {
+  background-color: var(--ds-cta-hover);
+  transform: scale(1.03);
 }
 
 /* -------------------------
-   Navbar
+   Cards & Containers
+-------------------------- */
+.ds-card, .card {
+  background: var(--ds-white);
+  border-radius: var(--ds-radius);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: var(--ds-shadow);
+  padding: 24px;
+  transition: transform 0.2s ease;
+}
+
+.ds-card:hover {
+  transform: translateY(-4px);
+}
+
+/* -------------------------
+   Forms & Inputs
+-------------------------- */
+.form-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ds-text-main);
+  margin-bottom: 8px;
+}
+
+.form-control, .ds-input, .ds-select {
+  border-radius: var(--ds-radius-sm);
+  border: 1.5px solid #e2e8f0;
+  padding: 12px 16px;
+  height: auto;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus, .ds-input:focus {
+  border-color: var(--ds-primary);
+  box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15);
+  outline: none;
+}
+
+/* -------------------------
+   Navbar (Deep Space style)
 -------------------------- */
 .navbar.ds-navbar {
-  background-color: var(--ds-primary) !important;
+  background-color: var(--ds-primary-dark) !important;
+  padding: 1rem 2rem;
 }
-.navbar.ds-navbar .navbar-brand,
-.navbar.ds-navbar .nav-link,
-.navbar.ds-navbar .navbar-text {
-  color: #fff !important;
+
+.navbar.ds-navbar .nav-link {
+  color: rgba(255,255,255,0.8) !important;
+  font-weight: 500;
+}
+
+.navbar.ds-navbar .nav-link:hover {
+  color: var(--ds-cta) !important;
 }
 
 /* -------------------------
-   Forms (Bootstrap overrides)
+   Modals (Glassmorphism sutil)
 -------------------------- */
-.form-control,
-.form-select {
-  border-radius: var(--ds-radius);
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: var(--ds-primary);
-  box-shadow: 0 0 0 0.2rem rgba(0, 102, 153, 0.2);
-}
-
-/* Optional: show “success” and “error” styles */
-.is-valid {
-  border-color: var(--ds-success) !important;
-}
-.is-valid:focus {
-  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.2) !important;
-}
-
-.is-invalid {
-  border-color: var(--ds-danger) !important;
-}
-.is-invalid:focus {
-  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.2) !important;
-}
-
-/* Cards: subtle rounding consistent */
-.card {
-  border-radius: var(--ds-radius);
-}
-
-/* Layout */
-.ds-page {
-  padding-top: 24px;
-  padding-bottom: 24px;
-}
-
-/* Cards / Panels */
-.ds-card {
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--ds-radius);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-}
-
-/* Inputs (más “enterprise”) */
-.form-control,
-.form-select {
-  height: 48px;
-  padding: 10px 14px;
-  font-size: 16px;
-}
-
-.form-label {
-  font-size: 14px;
-  color: rgba(51,51,51,0.75);
-  margin-bottom: 6px;
-}
-
-/* Buttons */
-.btn {
-  height: 44px;
-  /* padding: 0 18px; */
-  padding: 0 36px;
-}
-
-/* CTA: más “pill” como tu ejemplo */
-.btn-cta {
-  border-radius: 12px;
-}
-
-/* Tables */
-.table thead th {
-  font-weight: 700;
-}
-
-/* Modal look */
-.modal-content {
-  border-radius: var(--ds-radius);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
-  border: 0;
-}
-.modal-header {
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-}
-.modal-footer {
-  border-top: 1px solid rgba(0,0,0,0.06);
-}
-
-/* Layout */
-.ds-page {
-  padding-top: 24px;
-  padding-bottom: 24px;
-}
-
-/* Cards / Panels */
-.ds-card {
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--ds-radius);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-}
-
-/* Inputs (más “enterprise”) */
-.form-control,
-.form-select {
-  height: 48px;
-  padding: 10px 14px;
-  font-size: 16px;
-}
-
-.form-label {
-  font-size: 14px;
-  color: rgba(51,51,51,0.75);
-  margin-bottom: 6px;
-}
-
-/* Buttons */
-.btn {
-  height: 44px;
-  padding: 0 18px;
-}
-
-/* CTA: más “pill” como tu ejemplo */
-.btn-cta {
-  border-radius: 12px;
-}
-
-/* Tables */
-.table thead th {
-  font-weight: 700;
-}
-
-/* Modal look */
-.modal-content {
-  border-radius: var(--ds-radius);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
-  border: 0;
-}
-.modal-header {
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-}
-.modal-footer {
-  border-top: 1px solid rgba(0,0,0,0.06);
-}
-
-/* ===== DS: Modal base ===== */
 .ds-modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  z-index: 9999;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
 }
 
 .ds-modalCard {
-  width: 100%;
-  max-width: 900px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
-  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-.ds-modalHeader {
-  padding: 18px 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #e5e7eb;
-  background: #ffffff;
-}
-
-.ds-modalBody {
-  padding: 22px;
-}
-
-.ds-modalFooter {
-  padding: 18px;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  background: #ffffff;
-}
-
-/* ===== DS: UI controls ===== */
-.ds-closeBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid #d0d5dd;
-  background: #ffffff;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  line-height: 1;
-}
-
-.ds-labelMuted {
-  color: #667085;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.ds-input {
-  border-radius: 10px;
-  padding: 10px 12px;
-  border: 1px solid #d0d5dd;
-}
-
-.ds-select {
-  border-radius: 10px;
-  padding: 10px 12px;
-  border: 1px solid #d0d5dd;
-  background: #ffffff;
-}
-
-.ds-btnPrimary {
-  border-radius: 10px;
-  padding: 10px 18px;
-  background: #006699;
-  color: #ffffff;
-  font-weight: 800;
-  border: none;
-}
-
-.ds-btnCta {
-  border-radius: 10px;
-  padding: 10px 18px;
-  background: #ff6600;
-  color: #ffffff;
-  font-weight: 800;
-  border: none;
-}
-
-.ds-btnGhost {
-  border-radius: 10px;
-  padding: 10px 18px;
-  font-weight: 700;
-  border-radius: 10px;
-}
-
-/* ===== DS: Text helpers ===== */
 .ds-titleBlue {
-  color: #006699;
+  color: var(--ds-primary);
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
-.ds-select {
-  border-radius: 12px !important;
-  padding: 10px 12px !important;
-  border: 1px solid #d0d5dd !important;
-  background-color: #fff !important;
-  height: 44px;
-}
-
-.ds-input {
-  border-radius: 12px !important;
-  height: 44px;
-}
-
+/* Helpers */
+.text-muted { color: var(--ds-text-muted) !important; }
