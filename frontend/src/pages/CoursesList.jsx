@@ -145,7 +145,11 @@ export default function CoursesList() {
         area: String(newCourse.area).trim() || undefined,
       };
 
-      if (!payload.courseCode || !payload.name || Number.isNaN(payload.credits)) {
+      if (
+        !payload.courseCode ||
+        !payload.name ||
+        Number.isNaN(payload.credits)
+      ) {
         setMsgError("Completa courseCode, name y credits.");
         return;
       }
@@ -238,127 +242,104 @@ export default function CoursesList() {
   };
 
   return (
-    <div className="container py-2">
-      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-        <div>
-          <h2 className="m-0" style={{ color: "#006699" }}>
-            Cursos - Mantenedor
-          </h2>
-          <small className="text-muted">Gestión de cursos</small>
-        </div>
+    <div className="container py-2 ds-table-page">
+      <div className="ds-card courses-toolbar">
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <div>
+            <h2 className="m-0 courses-title">Cursos - Mantenedor</h2>
+          </div>
 
-        <div className="d-flex gap-2 align-items-center">
-          <input
-            className="form-control"
-            style={{ maxWidth: 320, borderRadius: 8 }}
-            placeholder="Filtrar por código o nombre..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          />
+          <div className="d-flex gap-2 align-items-center">
+            <input
+              className="form-control ds-filter-input"
+              placeholder="Filtrar por código o nombre..."
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            />
 
-          <button
-            className="btn"
-            style={{ background: "#FF6600", color: "white", borderRadius: 8 }}
-            onClick={openCreateModal}
-          >
-            Agregar
-          </button>
+            <button
+              className="btn btn-cta d-flex align-items-center justify-content-between"
+              onClick={openCreateModal}
+            >
+              <span>Agregar</span>
+              <i className="bi bi-plus-lg"></i>
+            </button>
+          </div>
         </div>
       </div>
 
-      {msgError && <div className="alert alert-danger">{msgError}</div>}
-      {msgOk && <div className="alert alert-success">{msgOk}</div>}
+      {msgError && <div className="alert alert-danger mt-3">{msgError}</div>}
+      {msgOk && <div className="alert alert-success mt-3">{msgOk}</div>}
 
       {loading ? (
-        <div className="alert alert-info">Cargando cursos...</div>
+        <div className="alert alert-info mt-3">Cargando cursos...</div>
       ) : (
         <>
-          <div className="mb-2 text-muted">
+          <div className="mb-2 text-muted mt-3">
             Mostrando <b>{filtered.length}</b> de <b>{courses.length}</b>
           </div>
 
           {filtered.length === 0 ? (
-            <div className="alert alert-secondary">No hay cursos para mostrar.</div>
+            <div className="alert alert-secondary">
+              No hay cursos para mostrar.
+            </div>
           ) : (
-            <table className="table table-hover align-middle">
-              <thead className="table-light">
-                <tr>
-                  <th style={{ width: 140 }}>Código</th>
-                  <th>Nombre</th>
-                  <th style={{ width: 120 }}>Créditos</th>
-                  <th className="text-end" style={{ width: 120 }}>
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((c) => (
-                  <tr key={c._id || c.courseCode}>
-                    <td>
-                      <strong>{c.courseCode}</strong>
-                    </td>
-                    <td style={{ color: "#006699", fontWeight: 600 }}>{c.name}</td>
-                    <td>{c.credits}</td>
-                    <td className="text-end">
-                      <button
-                        className="btn btn-sm btn-outline-primary"
-                        title="Ver detalle"
-                        onClick={() => openViewModal(c.courseCode)}
-                      >
-                        👁
-                      </button>
-                    </td>
+            <div className="ds-card courses-table-card">
+              <table className="table table-hover align-middle m-0">
+                <thead className="table-light">
+                  <tr>
+                    <th className="courses-col-code text-center">Código</th>
+                    <th className="text-center">Nombre</th>
+                    <th className="courses-col-credits text-center">
+                      Créditos
+                    </th>
+                    <th className="text-end courses-col-actions text-center">
+                      Acciones
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filtered.map((c) => (
+                    <tr key={c._id || c.courseCode}>
+                      <td className="text-center">
+                        <strong>{c.courseCode}</strong>
+                      </td>
+                      <td className="courses-name">{c.name}</td>
+                      <td className="text-center">{c.credits}</td>
+
+                      <td className="text-center">
+                        <button
+                          className="btn btn-sm btn-link btn-icon d-inline-flex align-items-center justify-content-center"
+                          title="Ver detalle"
+                          onClick={() => openViewModal(c.courseCode)}
+                        >
+                          <i className="bi bi-eye"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </>
       )}
 
       {/* ===== MODAL CREAR ===== */}
       {openCreate && (
-        <div
-          onClick={closeCreate}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.45)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 16,
-            zIndex: 9999,
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: "100%",
-              maxWidth: 620,
-              background: "white",
-              borderRadius: 8,
-              boxShadow: "0 16px 40px rgba(0,0,0,0.2)",
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                padding: 16,
-                background: "#006699",
-                color: "white",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ fontWeight: 800 }}>Agregar curso</div>
-              <button className="btn btn-sm btn-light" onClick={closeCreate}>
-                ✕
+        <div className="ds-modal-backdrop" onClick={closeCreate}>
+          <div className="ds-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="ds-modal-header">
+              <div className="ds-modal-title">Agregar curso</div>
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={closeCreate}
+              >
+                Cerrar
               </button>
             </div>
 
-            <form onSubmit={handleCreate} style={{ padding: 16 }}>
+            <form onSubmit={handleCreate} className="ds-modal-body">
               <div className="row g-2">
                 <div className="col-4">
                   <label className="form-label">Código</label>
@@ -366,7 +347,10 @@ export default function CoursesList() {
                     className="form-control"
                     value={newCourse.courseCode}
                     onChange={(e) =>
-                      setNewCourse((p) => ({ ...p, courseCode: e.target.value }))
+                      setNewCourse((p) => ({
+                        ...p,
+                        courseCode: e.target.value,
+                      }))
                     }
                     required
                   />
@@ -411,19 +395,15 @@ export default function CoursesList() {
               </div>
 
               <div className="d-flex gap-2 mt-4">
-                <button
-                  type="submit"
-                  className="btn"
-                  style={{
-                    background: "#FF6600",
-                    color: "white",
-                    borderRadius: 8,
-                  }}
-                >
+                <button type="submit" className="btn btn-cta">
                   Guardar
                 </button>
 
-                <button type="button" className="btn btn-outline-secondary" onClick={closeCreate}>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={closeCreate}
+                >
                   Cancelar
                 </button>
               </div>
@@ -434,49 +414,22 @@ export default function CoursesList() {
 
       {/* ===== MODAL VER / EDITAR ===== */}
       {openView && (
-        <div
-          onClick={closeView}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.45)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 16,
-            zIndex: 9999,
-          }}
-        >
+        <div className="ds-modal-backdrop" onClick={closeView}>
           <div
+            className="ds-modal ds-modal-lg"
             onClick={(e) => e.stopPropagation()}
-            style={{
-              width: "100%",
-              maxWidth: 720,
-              background: "white",
-              borderRadius: 8,
-              boxShadow: "0 16px 40px rgba(0,0,0,0.2)",
-              overflow: "hidden",
-            }}
           >
-            <div
-              style={{
-                padding: 16,
-                background: "#006699",
-                color: "white",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ fontWeight: 800 }}>
-                Curso {selectedCode || ""}
-              </div>
-              <button className="btn btn-sm btn-light" onClick={closeView}>
-                ✕
+            <div className="ds-modal-header">
+              <div className="ds-modal-title">Curso {selectedCode || ""}</div>
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={closeView}
+              >
+                Cerrar
               </button>
             </div>
 
-            <div style={{ padding: 16 }}>
+            <div className="ds-modal-body">
               {detailLoading ? (
                 <div className="alert alert-info">Cargando detalle...</div>
               ) : courseDetail ? (
@@ -485,47 +438,55 @@ export default function CoursesList() {
                     <>
                       <div className="row g-2">
                         <div className="col-4">
-                          <div className="text-muted" style={{ fontSize: 12 }}>
+                          <div className="text-muted courses-meta-label">
                             Código
                           </div>
-                          <div style={{ fontWeight: 700 }}>{courseDetail.courseCode}</div>
+                          <div className="courses-meta-value">
+                            {courseDetail.courseCode}
+                          </div>
                         </div>
 
                         <div className="col-8">
-                          <div className="text-muted" style={{ fontSize: 12 }}>
+                          <div className="text-muted courses-meta-label">
                             Nombre
                           </div>
-                          <div style={{ fontWeight: 700 }}>{courseDetail.name}</div>
+                          <div className="courses-meta-value">
+                            {courseDetail.name}
+                          </div>
                         </div>
 
                         <div className="col-4">
-                          <div className="text-muted" style={{ fontSize: 12 }}>
+                          <div className="text-muted courses-meta-label">
                             Créditos
                           </div>
-                          <div style={{ fontWeight: 700 }}>{courseDetail.credits}</div>
+                          <div className="courses-meta-value">
+                            {courseDetail.credits}
+                          </div>
                         </div>
 
                         <div className="col-8">
-                          <div className="text-muted" style={{ fontSize: 12 }}>
+                          <div className="text-muted courses-meta-label">
                             Área
                           </div>
-                          <div style={{ fontWeight: 700 }}>{courseDetail.area || "-"}</div>
+                          <div className="courses-meta-value">
+                            {courseDetail.area || "-"}
+                          </div>
                         </div>
                       </div>
 
                       <div className="d-flex gap-2 mt-4">
                         <button
-                          className="btn btn-outline-primary"
+                          className="btn btn-outline-secondary"
                           onClick={() => setEditMode(true)}
                         >
-                          ✏️ Editar
+                          Editar
                         </button>
 
                         <button
-                          className="btn btn-outline-danger"
+                          className="btn btn-outline-secondary"
                           onClick={handleDelete}
                         >
-                          🗑 Eliminar
+                          Eliminar
                         </button>
                       </div>
                     </>
@@ -538,7 +499,10 @@ export default function CoursesList() {
                             className="form-control"
                             value={editCourse.name}
                             onChange={(e) =>
-                              setEditCourse((p) => ({ ...p, name: e.target.value }))
+                              setEditCourse((p) => ({
+                                ...p,
+                                name: e.target.value,
+                              }))
                             }
                             required
                           />
@@ -551,7 +515,10 @@ export default function CoursesList() {
                             className="form-control"
                             value={editCourse.credits}
                             onChange={(e) =>
-                              setEditCourse((p) => ({ ...p, credits: e.target.value }))
+                              setEditCourse((p) => ({
+                                ...p,
+                                credits: e.target.value,
+                              }))
                             }
                             required
                           />
@@ -563,7 +530,10 @@ export default function CoursesList() {
                             className="form-control"
                             value={editCourse.area}
                             onChange={(e) =>
-                              setEditCourse((p) => ({ ...p, area: e.target.value }))
+                              setEditCourse((p) => ({
+                                ...p,
+                                area: e.target.value,
+                              }))
                             }
                             placeholder="Opcional"
                           />
@@ -571,15 +541,7 @@ export default function CoursesList() {
                       </div>
 
                       <div className="d-flex gap-2 mt-4">
-                        <button
-                          type="submit"
-                          className="btn"
-                          style={{
-                            background: "#FF6600",
-                            color: "white",
-                            borderRadius: 8,
-                          }}
-                        >
+                        <button type="submit" className="btn btn-cta">
                           Guardar cambios
                         </button>
 

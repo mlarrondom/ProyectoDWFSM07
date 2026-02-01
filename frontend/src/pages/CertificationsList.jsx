@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import CertificationsDetail from "./CertificationsDetail"; // <-- ajusta ruta si corresponde
+import CertificationsDetail from "./CertificationsDetail"; // ajusta ruta si corresponde
 
 export default function CertificationsList() {
   const API = import.meta.env.VITE_API_URL;
@@ -26,89 +26,6 @@ export default function CertificationsList() {
   // Ver (solo certCode)
   const [selectedCertCode, setSelectedCertCode] = useState(null);
 
-  // ========= Helpers UI (mantengo tu modal actual) =========
-  const modalOverlayStyle = {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.55)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
-    zIndex: 9999,
-  };
-
-  const modalCardStyle = {
-    width: "100%",
-    maxWidth: 900,
-    background: "white",
-    borderRadius: 12,
-    boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
-    overflow: "hidden",
-    border: "1px solid #e5e7eb",
-  };
-
-  const modalHeaderStyle = {
-    padding: "18px 22px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottom: "1px solid #e5e7eb",
-    background: "#ffffff",
-  };
-
-  const closeBtnStyle = {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    border: "1px solid #d0d5dd",
-    background: "white",
-    cursor: "pointer",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 18,
-    lineHeight: 1,
-  };
-
-  const inputStyle = {
-    borderRadius: 10,
-    padding: "10px 12px",
-    border: "1px solid #d0d5dd",
-  };
-
-  const selectStyle = {
-    borderRadius: 10,
-    padding: "10px 12px",
-    border: "1px solid #d0d5dd",
-    backgroundColor: "#fff",
-  };
-
-  const footerStyle = {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: 10,
-    marginTop: 22,
-  };
-
-  const primaryBtnStyle = {
-    borderRadius: 10,
-    padding: "10px 18px",
-    background: "#006699",
-    color: "white",
-    fontWeight: 800,
-    border: "none",
-  };
-
-  const ctaBtnStyle = {
-    borderRadius: 10,
-    padding: "10px 18px",
-    background: "#FF6600",
-    color: "white",
-    fontWeight: 800,
-    border: "none",
-  };
-
   // ========= Data =========
   const fetchCerts = async () => {
     try {
@@ -121,7 +38,8 @@ export default function CertificationsList() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.msg || "No se pudieron cargar certificaciones");
+      if (!res.ok)
+        throw new Error(data?.msg || "No se pudieron cargar certificaciones");
 
       setCertifications(data?.certifications || []);
     } catch (err) {
@@ -142,7 +60,9 @@ export default function CertificationsList() {
     if (!q) return certifications;
 
     return certifications.filter((c) =>
-      String(c.name ?? "").toLowerCase().includes(q)
+      String(c.name ?? "")
+        .toLowerCase()
+        .includes(q),
     );
   }, [certifications, filterName]);
 
@@ -213,41 +133,40 @@ export default function CertificationsList() {
   };
 
   return (
-    <div className="py-2">
+    <div className="container py-2 ds-table-page">
       {/* Header */}
-      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-        <div>
-          <h2 className="m-0" style={{ color: "#006699" }}>
-            Certificaciones - Mantenedor
-          </h2>
-          <small className="text-muted">Rol: {role}</small>
-        </div>
+      <div className="ds-card certs-toolbar">
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <div>
+            <h2 className="m-0 certs-title">Certificaciones - Mantenedor</h2>
+          </div>
 
-        <div className="d-flex gap-2 align-items-center">
-          <input
-            className="form-control"
-            style={{ maxWidth: 360, borderRadius: 10, padding: "10px 12px" }}
-            placeholder="Filtrar por nombre..."
-            value={filterName}
-            onChange={(e) => setFilterName(e.target.value)}
-          />
+          <div className="d-flex gap-2 align-items-center">
+            <input
+              className="form-control ds-filter-input"
+              placeholder="Filtrar por nombre..."
+              value={filterName}
+              onChange={(e) => setFilterName(e.target.value)}
+            />
 
-          <button style={ctaBtnStyle} onClick={openCreateModal}>
-            Agregar
-          </button>
+            <button className="btn btn-cta d-flex align-items-center justify-content-between" onClick={openCreateModal}>
+              Agregar
+              <i className="bi bi-plus-lg"></i>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mensajes */}
-      {msgError && <div className="alert alert-danger">{msgError}</div>}
-      {msgOk && <div className="alert alert-success">{msgOk}</div>}
+      {msgError && <div className="alert alert-danger mt-3">{msgError}</div>}
+      {msgOk && <div className="alert alert-success mt-3">{msgOk}</div>}
 
       {/* Tabla */}
       {loading ? (
-        <div className="alert alert-info">Cargando certificaciones...</div>
+        <div className="alert alert-info mt-3">Cargando certificaciones...</div>
       ) : (
         <>
-          <div className="mb-2 text-muted">
+          <div className="mb-2 text-muted mt-3">
             Mostrando <b>{filtered.length}</b> de <b>{certifications.length}</b>
           </div>
 
@@ -256,75 +175,75 @@ export default function CertificationsList() {
               No hay certificaciones para mostrar.
             </div>
           ) : (
-            <table className="table table-hover align-middle w-100">
-              <thead className="table-light">
-                <tr>
-                  <th style={{ width: 140 }}>Código</th>
-                  <th>Nombre</th>
-                  <th style={{ width: 180 }}>Campus</th>
-                  <th className="text-end" style={{ width: 120 }}>
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filtered.map((c) => (
-                  <tr key={c._id || c.certCode}>
-                    <td>
-                      <strong>{c.certCode}</strong>
-                    </td>
-
-                    <td style={{ color: "#006699", fontWeight: 700 }}>
-                      {c.name}
-                    </td>
-
-                    <td>{c.campus || "-"}</td>
-
-                    <td className="text-end">
-                      <button
-                        className="btn btn-sm btn-outline-primary"
-                        style={{ borderRadius: 10 }}
-                        onClick={() => openViewModal(c.certCode)}
-                        title="Ver certificación"
-                      >
-                        👁
-                      </button>
-                    </td>
+            <div className="ds-card certs-table-card">
+              <table className="table table-hover align-middle w-100 m-0">
+                <thead className="table-light">
+                  <tr>
+                    <th className="certs-col-code text-center">Código</th>
+                    <th className="text-center">Nombre</th>
+                    <th className="certs-col-campus text-center">Campus</th>
+                    <th className="text-end certs-col-actions text-center">Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {filtered.map((c) => (
+                    <tr key={c._id || c.certCode}>
+                      <td className="text-center">
+                        <strong>{c.certCode}</strong>
+                      </td>
+
+                      <td className="certs-name">{c.name}</td>
+
+                      <td className="text-center">{c.campus || "-"}</td>
+
+                      <td className="text-center">
+                        <button
+                          className="btn btn-sm btn-link btn-icon d-inline-flex align-items-center justify-content-center"
+                          onClick={() => openViewModal(c.certCode)}
+                          title="Ver certificación"
+                        >
+                          <i className="bi bi-eye"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </>
       )}
 
       {/* ===== MODAL CREAR ===== */}
       {openCreate && (
-        <div onClick={closeCreateModal} style={modalOverlayStyle}>
-          <div onClick={(e) => e.stopPropagation()} style={modalCardStyle}>
-            <div style={modalHeaderStyle}>
-              <h5 style={{ margin: 0, fontWeight: 900 }}>Nueva Certificación</h5>
+        <div onClick={closeCreateModal} className="ds-modal-backdrop">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="ds-modal ds-modal-xl"
+          >
+            <div className="ds-modal-header">
+              <h5 className="ds-modal-title m-0">Nueva Certificación</h5>
 
               <button
                 type="button"
                 onClick={closeCreateModal}
-                style={closeBtnStyle}
+                className="btn btn-sm btn-outline-secondary"
                 aria-label="Cerrar"
               >
-                ✕
+                Cerrar
               </button>
             </div>
 
-            <form onSubmit={handleCreateCertification} style={{ padding: 22 }}>
+            <form
+              onSubmit={handleCreateCertification}
+              className="ds-modal-body"
+            >
               <div className="row g-3">
                 <div className="col-md-3">
-                  <label style={{ color: "#667085", fontSize: 13, fontWeight: 600 }}>
-                    Código
-                  </label>
+                  <label className="form-label ds-label">Código</label>
                   <input
-                    className="form-control"
-                    style={inputStyle}
+                    className="form-control certs-input"
                     placeholder="Ej: 2001"
                     value={newCert.certCode}
                     onChange={(e) =>
@@ -335,12 +254,9 @@ export default function CertificationsList() {
                 </div>
 
                 <div className="col-md-9">
-                  <label style={{ color: "#667085", fontSize: 13, fontWeight: 600 }}>
-                    Nombre
-                  </label>
+                  <label className="form-label ds-label">Nombre</label>
                   <input
-                    className="form-control"
-                    style={inputStyle}
+                    className="form-control certs-input"
                     placeholder="Nombre de la certificación"
                     value={newCert.name}
                     onChange={(e) =>
@@ -351,12 +267,9 @@ export default function CertificationsList() {
                 </div>
 
                 <div className="col-md-4">
-                  <label style={{ color: "#667085", fontSize: 13, fontWeight: 600 }}>
-                    Campus
-                  </label>
+                  <label className="form-label ds-label">Campus</label>
                   <select
-                    className="form-select"
-                    style={selectStyle}
+                    className="form-select certs-select"
                     value={newCert.campus}
                     onChange={(e) =>
                       setNewCert((p) => ({ ...p, campus: e.target.value }))
@@ -368,12 +281,9 @@ export default function CertificationsList() {
                 </div>
 
                 <div className="col-md-8">
-                  <label style={{ color: "#667085", fontSize: 13, fontWeight: 600 }}>
-                    Unidad
-                  </label>
+                  <label className="form-label ds-label">Unidad</label>
                   <input
-                    className="form-control"
-                    style={inputStyle}
+                    className="form-control certs-input"
                     placeholder="Facultad / Unidad"
                     value={newCert.ownerUnit}
                     onChange={(e) =>
@@ -383,17 +293,20 @@ export default function CertificationsList() {
                 </div>
               </div>
 
-              <div style={footerStyle}>
+              <div className="d-flex justify-content-end gap-2 mt-4">
                 <button
                   type="button"
                   onClick={closeCreateModal}
                   className="btn btn-outline-secondary"
-                  style={{ borderRadius: 10, padding: "10px 18px", fontWeight: 700 }}
                 >
                   Cancelar
                 </button>
 
-                <button type="submit" style={primaryBtnStyle} disabled={creating}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={creating}
+                >
                   {creating ? "Guardando..." : "Guardar"}
                 </button>
               </div>
@@ -404,48 +317,31 @@ export default function CertificationsList() {
 
       {/* ===== MODAL VER ===== */}
       {selectedCertCode && (
-        <div onClick={closeViewModal} style={modalOverlayStyle}>
-          <div onClick={(e) => e.stopPropagation()} style={modalCardStyle}>
-            <div style={modalHeaderStyle}>
-              <h5 style={{ margin: 0, fontWeight: 900 }}>
+        <div onClick={closeViewModal} className="ds-modal-backdrop">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="ds-modal ds-modal-xl"
+          >
+            <div className="ds-modal-header">
+              <h5 className="ds-modal-title m-0">
                 Certificación {selectedCertCode}
               </h5>
 
               <button
                 type="button"
                 onClick={closeViewModal}
-                style={closeBtnStyle}
+                className="btn btn-sm btn-outline-secondary"
                 aria-label="Cerrar"
               >
-                ✕
+                Cerrar
               </button>
             </div>
 
-            <div style={{ padding: 22 }}>
+            <div className="ds-modal-body">
               <CertificationsDetail
                 certCode={selectedCertCode}
                 onUpdated={fetchCerts}
               />
-            </div>
-
-            <div
-              style={{
-                padding: 18,
-                borderTop: "1px solid #e5e7eb",
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: 10,
-                background: "#ffffff",
-              }}
-            >
-              <button
-                type="button"
-                onClick={closeViewModal}
-                className="btn btn-outline-secondary"
-                style={{ borderRadius: 10, padding: "10px 18px", fontWeight: 700 }}
-              >
-                Cerrar
-              </button>
             </div>
           </div>
         </div>

@@ -14,11 +14,11 @@ import CoursesList from "./pages/CoursesList.jsx";
 // Placeholder simple para no romper el link del navbar
 function Help() {
   return (
-    <div className="py-4">
-      <h2 style={{ color: "#006699" }}>Ayuda</h2>
-      <p style={{ color: "#333333" }}>
-        Próximamente: formulario de contacto.
-      </p>
+    <div className="container py-4">
+      <div className="ds-card help-card">
+        <h2 className="help-title">Ayuda</h2>
+        <p className="help-text">Próximamente: formulario de contacto.</p>
+      </div>
     </div>
   );
 }
@@ -56,24 +56,6 @@ function App() {
             }
           />
 
-          <Route
-            path="/admin/certifications/:certCode"
-            element={
-              <Layout>
-                <CertificationsDetail />
-              </Layout>
-            }
-          />
-
-          <Route
-            path="/help"
-            element={
-              <Layout>
-                <Help />
-              </Layout>
-            }
-          />
-
           {/* Admin (privado, con navbar) */}
           <Route
             path="/admin/certifications"
@@ -81,6 +63,17 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <CertificationsAdmin />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/certifications/:certCode"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <CertificationsDetail />
                 </Layout>
               </ProtectedRoute>
             }
@@ -97,6 +90,15 @@ function App() {
             }
           />
 
+          <Route
+            path="/help"
+            element={
+              <Layout>
+                <Help />
+              </Layout>
+            }
+          />
+
           {/* Alias por compatibilidad */}
           <Route path="/certifications" element={<Navigate to="/catalog" replace />} />
 
@@ -109,3 +111,4 @@ function App() {
 }
 
 export default App;
+

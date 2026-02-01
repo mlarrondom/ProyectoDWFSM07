@@ -1,146 +1,532 @@
+/* =========================================
+   1. IMPORTACIÓN DE FUENTE Y RESET
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 :root {
-  /* Colors - Cyber Teal Palette */
-  --ds-primary: #0d9488;      /* Electric Teal */
-  --ds-primary-dark: #0f172a; /* Deep Space (Texto y Dark elements) */
-  --ds-cta: #2dd4bf;         /* Mint Spark */
+  /* Paleta Cyber Teal Principal */
+  --ds-primary: #0d9488;       /* Electric Teal */
+  --ds-primary-dark: #0f172a;  /* Deep Space (Headers y Áreas de énfasis) */
+  --ds-cta: #2dd4bf;           /* Mint Spark */
   --ds-cta-hover: #14b8a6;
+  --ds-indigo: #6366f1;        /* Indigo (Para Certificación Meta) */
   
-  --ds-text-main: #1e293b;    /* Slate 800 */
-  --ds-text-muted: #64748b;   /* Slate 500 */
-  --ds-bg: #f8fafc;           /* Soft Slate */
+  /* Fondos para eliminar el exceso de blanco */
+  --ds-bg: #f1f5f9;            /* Fondo de página gris/azul suave */
   --ds-white: #ffffff;
+  --ds-border: #cbd5e1;
+  
+  /* Textos */
+  --ds-text-main: #1e293b;     
+  --ds-text-muted: #64748b;    
 
-  /* States */
-  --ds-success: #10b981;
-  --ds-danger: #f43f5e;
-
-  /* Shape & Shadow */
+  /* Propiedades Físicas */
   --ds-radius: 12px;
   --ds-radius-sm: 8px;
-  --ds-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
+  --ds-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
   --ds-font: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 body {
-  font-family: var(--ds-font);
+  background-color: var(--ds-bg);
   color: var(--ds-text-main);
-  background: var(--ds-bg);
-  line-height: 1.6;
+  font-family: var(--ds-font);
+  margin: 0;
 }
 
-/* -------------------------
-   Buttons (Modern UI)
--------------------------- */
+/* =========================================
+   2. COMPONENTES DE ESTRUCTURA (Headers)
+   ========================================= */
+
+/* Esto quita el "blanco" de las cabeceras y les da un look Pro */
+.courses-toolbar, .certs-toolbar, .catalog-toolbar {
+  background: var(--ds-primary-dark) !important;
+  color: var(--ds-white) !important;
+  border-radius: var(--ds-radius) var(--ds-radius) 0 0 !important;
+  padding: 24px !important;
+  border: none !important;
+}
+
+.courses-title, .certs-title, .catalog-title {
+  color: var(--ds-cta) !important; /* Título brilla en el fondo oscuro */
+  font-weight: 800 !important;
+  margin: 0 !important;
+}
+
+/* =========================================
+   3. BOTONES (Sin Naranjas)
+   ========================================= */
 .btn {
+  font-family: var(--ds-font);
   border-radius: var(--ds-radius-sm);
-  font-weight: 600;
-  padding: 12px 24px;
+  font-weight: 700;
   transition: all 0.2s ease;
   border: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
+/* Verde Oscuro Principal */
 .btn-primary {
-  background-color: var(--ds-primary);
-  color: white;
+  background-color: var(--ds-primary) !important;
+  color: white !important;
 }
 
-.btn-primary:hover {
-  background-color: #0b7a70;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
-}
-
+/* Verde Menta (Para "Agregar", "Comprar" o "Ingresar") */
 .btn-cta {
-  background-color: var(--ds-cta);
-  color: var(--ds-primary-dark);
-  border-radius: 50px; /* Pill shape para resaltar */
+  background-color: var(--ds-cta) !important;
+  color: var(--ds-primary-dark) !important;
 }
 
 .btn-cta:hover {
-  background-color: var(--ds-cta-hover);
-  transform: scale(1.03);
+  background-color: var(--ds-cta-hover) !important;
+  transform: translateY(-2px);
 }
 
-/* -------------------------
-   Cards & Containers
--------------------------- */
-.ds-card, .card {
+.btn-outline-secondary {
+  border: 1px solid var(--ds-border) !important;
+  background: white !important;
+  color: var(--ds-text-main) !important;
+}
+
+/* =========================================
+   4. MODALES (Encabezado Oscuro + Letras Menta)
+   ========================================= */
+.ds-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.8) !important; /* Un poco más oscuro para resaltar la modal */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999 !important;
+  backdrop-filter: blur(4px);
+  padding: 20px;
+}
+
+.ds-modal {
+  background: var(--ds-white);
+  width: 100%;
+  max-width: 700px;
+  border-radius: var(--ds-radius);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: modalSlide 0.3s ease-out;
+  border: none;
+}
+
+@keyframes modalSlide {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.ds-modal-header {
+  background: var(--ds-primary-dark) !important; /* Fondo Deep Space */
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--ds-primary); /* Línea sutil teal para separar */
+}
+
+/* Forzamos el color Verde Menta en el título */
+.ds-modal-header h1, 
+.ds-modal-header h2, 
+.ds-modal-header h3, 
+.ds-modal-header h4, 
+.ds-modal-header h5, 
+.ds-modal-header .ds-modal-title {
+  color: var(--ds-cta) !important; /* Color Verde Menta */
+  margin: 0;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Estilo para el botón X de cerrar */
+.ds-modal-header .btn-close-white {
+  filter: invert(1) grayscale(1) brightness(2); /* Si usas el de bootstrap */
+}
+
+.ds-modal-body {
+  padding: 24px;
+  background: white;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: var(--ds-text-main);
+}
+
+/* =========================================
+   5. TARJETAS Y TABLAS
+   ========================================= */
+.ds-card {
   background: var(--ds-white);
   border-radius: var(--ds-radius);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid var(--ds-border);
   box-shadow: var(--ds-shadow);
   padding: 24px;
-  transition: transform 0.2s ease;
 }
 
-.ds-card:hover {
-  transform: translateY(-4px);
+/* Tablas estilo Dashboard */
+.table {
+  background: white;
+  margin-bottom: 0;
 }
 
-/* -------------------------
-   Forms & Inputs
--------------------------- */
-.form-label {
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--ds-text-main);
-  margin-bottom: 8px;
+.table thead th {
+  background: #f8fafc;
+  color: var(--ds-text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 16px;
+  border-bottom: 2px solid var(--ds-bg);
 }
 
-.form-control, .ds-input, .ds-select {
-  border-radius: var(--ds-radius-sm);
-  border: 1.5px solid #e2e8f0;
-  padding: 12px 16px;
-  height: auto;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-}
-
-.form-control:focus, .ds-input:focus {
-  border-color: var(--ds-primary);
-  box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15);
-  outline: none;
-}
-
-/* -------------------------
-   Navbar (Deep Space style)
--------------------------- */
-.navbar.ds-navbar {
-  background-color: var(--ds-primary-dark) !important;
-  padding: 1rem 2rem;
-}
-
-.navbar.ds-navbar .nav-link {
-  color: rgba(255,255,255,0.8) !important;
-  font-weight: 500;
-}
-
-.navbar.ds-navbar .nav-link:hover {
-  color: var(--ds-cta) !important;
-}
-
-/* -------------------------
-   Modals (Glassmorphism sutil)
--------------------------- */
-.ds-modalOverlay {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(4px);
-}
-
-.ds-modalCard {
+/* --- CLASES PARA EL DIAGRAMA DE CERTIFICACIÓN --- */
+.ds-card-certification {
+  background: var(--ds-indigo);
+  color: white;
   border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 30px;
+  text-align: center;
 }
 
-.ds-titleBlue {
+.ds-card-course-core {
+  border: 2px solid var(--ds-primary);
+  background: white;
+}
+
+.ds-card-course-elective {
+  border: 2px dashed var(--ds-border);
+  background: #f8fafc;
+}
+
+.badge-credits {
+  background: var(--ds-primary-dark);
+  color: var(--ds-cta);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+}
+
+
+
+
+.ds-nav {
+  background: var(--ds-white);
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.ds-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+}
+
+.ds-brand {
+  text-decoration: none;
   color: var(--ds-primary);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  font-family: var(--ds-font);
+  margin-right: 10px;
 }
 
-/* Helpers */
-.text-muted { color: var(--ds-text-muted) !important; }
+.ds-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-navlink {
+  color: var(--ds-text-main);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 10px 10px;
+  border-radius: var(--ds-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.ds-navlink.is-active {
+  font-weight: 700;
+  background: rgba(13, 148, 136, 0.12);
+}
+
+.ds-trigger {
+  background: transparent;
+}
+
+.ds-caret {
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.ds-dropdown {
+  position: relative;
+}
+
+.ds-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  min-width: 240px;
+  background: var(--ds-white);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-sm);
+  box-shadow: var(--ds-shadow);
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.ds-menu-right {
+  right: 0;
+}
+
+.ds-menu-item {
+  display: block;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: var(--ds-text-main);
+}
+
+.ds-menu-item:hover {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.ds-menu-header {
+  padding: 12px;
+}
+
+.ds-menu-name {
+  font-weight: 800;
+  color: var(--ds-text-main);
+}
+
+.ds-menu-role {
+  font-size: 13px;
+  color: var(--ds-text-muted);
+}
+
+.ds-menu-sep {
+  border-top: 1px solid var(--ds-border);
+}
+
+.ds-chip-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: none;
+  text-decoration: none;
+  color: var(--ds-cta);
+  font-weight: 700;
+  background: var(--ds-primary-dark);
+}
+
+.ds-userchip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: none;
+  background: var(--ds-primary-dark);
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+  color: var(--ds-cta);
+  font-size: 14px;
+  max-width: 170px;
+}
+
+.ds-userchip-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ds-userchip-caret {
+  font-weight: 700;
+  color: var(--ds-cta);
+}
+
+.ds-menu-danger {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  color: #b42318;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ds-menu-danger:hover {
+  background: rgba(180, 35, 24, 0.06);
+}
+
+.login-card {
+  max-width: 420px;     /* ancho ideal para login */
+  width: 100%;
+  margin: 0 auto;       /* centra horizontalmente */
+}
+
+.btn-icon {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--ds-primary-dark)
+}
+
+.btn-link.btn-icon {
+  color: var(--ds-text-muted);
+}
+
+.btn-link.btn-icon:hover {
+  color: var(--ds-primary);
+  text-decoration: none;
+}
+
+.ds-table-page .table {
+  font-size: 1rem; /* ~14.4px */
+}
+
+.ds-table-page .table thead th {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ds-table-page .table tbody td {
+  vertical-align: middle;
+}
+
+.btn-cta {
+  min-width: 120px;   /* ajusta a gusto: 120–160px */
+}
+
+.ds-filter-input {
+  min-width: 280px;   /* base */
+}
+
+@media (min-width: 768px) {
+  .ds-filter-input {
+    min-width: 340px;
+  }
+}
+
+/* Modal (reutilizable) */
+.ds-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 9999;
+}
+
+.ds-modal-card {
+  width: 100%;
+  max-width: 900px;
+  background: var(--ds-white);
+  border-radius: var(--ds-radius);
+  border: 1px solid var(--ds-border);
+  box-shadow: var(--ds-shadow);
+  overflow: hidden;
+}
+
+.ds-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: var(--ds-primary-dark);
+  color: var(--ds-white);
+}
+
+.ds-modal-title {
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.ds-modal-body {
+  padding: 18px;
+}
+
+.ds-modal-footer {
+  padding: 14px 18px;
+  border-top: 1px solid var(--ds-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--ds-white);
+}
+
+/* Icon button (para acciones y cerrar) */
+.btn-icon {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+}
+
+/* Botón sin borde para acciones en tabla */
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: var(--ds-text-muted);
+}
+
+.btn-ghost:hover {
+  color: var(--ds-primary);
+}
+
+/* Tabla requerimientos más compacta */
+.ds-req-table {
+  font-size: 0.92rem;
+}
+
+.ds-req-table thead th {
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+}
+
+/* Info general como “card” dentro de la modal */
+.ds-info-card {
+  background: var(--ds-white);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius);
+  padding: 16px;
+  box-shadow: var(--ds-shadow);
+}
+
+.ds-info-label {
+  font-size: 0.78rem;
+  color: var(--ds-text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.ds-info-value {
+  font-weight: 800;
+  color: var(--ds-text-main);
+}
+
+/* Inputs con look consistente (si no los tienes ya) */
+.ds-input,
+.ds-select {
+  border-radius: var(--ds-radius-sm);
+}
+
+/* Botón “Agregar requerimiento” con space-between */
+.ds-btn-sb {
+  min-width: 220px;
+}

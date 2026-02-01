@@ -13,11 +13,19 @@ const CONDITION_OPTIONS = [
   { value: "O", label: "Electivo" },
 ];
 
+/*
+  Owner Units:
+  Me falta el modelo de Certification (o el enum/constante) para cargar el listado real.
+  Por ahora:
+  - Si no hay listado, el select muestra solo el valor actual (evita inventar valores).
+  - Cuando me pases el modelo, lo reemplazamos por el enum real.
+*/
+const OWNER_UNIT_OPTIONS = [];
+
 export default function CertificationsDetail({ certCode, onUpdated }) {
   const { token, user } = useAuth();
   const role = user?.user?.role || user?.role || "-";
 
-  // ===== Data =====
   const [certification, setCertification] = useState(null);
   const [requirements, setRequirements] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -34,7 +42,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     setMsgError("");
   };
 
-  // ===== Edit general =====
+  // Edit general
   const [isEditingGeneral, setIsEditingGeneral] = useState(false);
   const [savingGeneral, setSavingGeneral] = useState(false);
   const [generalForm, setGeneralForm] = useState({
@@ -43,7 +51,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     ownerUnit: "",
   });
 
-  // ===== Add requirement row =====
+  // Add requirement row
   const [addingReq, setAddingReq] = useState(false);
   const [savingReq, setSavingReq] = useState(false);
   const [reqForm, setReqForm] = useState({
@@ -51,10 +59,18 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     type: "CREDITS",
     condition: "Y",
     creditsRequired: "",
-    courseInput: "", // input buscable (datalist)
+    courseInput: "",
   });
 
-  // ===== Fetchers =====
+  // Edit requirement
+  const [editingReqId, setEditingReqId] = useState(null);
+  const [savingEditReq, setSavingEditReq] = useState(false);
+  const [editReqForm, setEditReqForm] = useState({
+    type: "",
+    creditsRequired: "",
+    courseInput: "",
+  });
+
   const fetchCertification = async () => {
     if (!certCode || !token) return;
 
@@ -92,10 +108,9 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       setLoadingReq(true);
       resetMsgs();
 
-      const res = await fetch(
-        `${API}/api/certifications/${certCode}/requirements`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await fetch(`${API}/api/certifications/${certCode}/requirements`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data?.msg || "Error cargando requerimientos");
@@ -146,9 +161,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [certCode, token]);
 
-  // ===== Helpers =====
-  const typeLabel = (type) =>
-    TYPE_OPTIONS.find((t) => t.value === type)?.label || type;
+  const typeLabel = (type) => TYPE_OPTIONS.find((t) => t.value === type)?.label || type;
 
   const conditionLabel = (cond) =>
     CONDITION_OPTIONS.find((c) => c.value === cond)?.label || cond;
@@ -164,7 +177,6 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
   };
 
   const datalistOptions = useMemo(() => {
-    // value = "DW101 - HTML..." (pero también sirve escribir "DW101")
     return (courses || []).map((c) => ({
       key: c.courseCode,
       value: `${c.courseCode} - ${c.name}`,
@@ -175,11 +187,9 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
   const parseCourseCode = (raw) => {
     const s = String(raw || "").trim();
     if (!s) return "";
-    // "DW101 - Nombre" => "DW101"
     return s.split(" - ")[0].trim();
   };
 
-  // ===== Actions: Edit general =====
   const startEditGeneral = () => {
     resetMsgs();
     setIsEditingGeneral(true);
@@ -212,9 +222,6 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
 
       const payload = { name, ownerUnit };
 
-      // Si tu backend restringe campus por rol, esto igual lo respeta:
-      // - admin lo manda
-      // - sedes no lo mandan
       if (role === "admin") payload.campus = campus;
 
       const res = await fetch(`${API}/api/certifications/${certCode}`, {
@@ -227,8 +234,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       });
 
       const data = await res.json();
-      if (!res.ok)
-        throw new Error(data?.msg || "Error actualizando certificación");
+      if (!res.ok) throw new Error(data?.msg || "Error actualizando certificación");
 
       setMsgOk("Certificación actualizada.");
       setIsEditingGeneral(false);
@@ -240,10 +246,10 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     }
   };
 
-  // ===== Actions: Add requirement =====
   const startAddRequirement = () => {
     resetMsgs();
     setAddingReq(true);
+    setEditingReqId(null);
     setReqForm({
       group: 1,
       type: "CREDITS",
@@ -274,14 +280,13 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       return;
     }
 
-    // Backend: CREDITS => group 1 y condition "Y"
     if (type === "CREDITS" && group !== 1) {
-      setMsgError('Créditos deben ir en grupo 1.');
+      setMsgError("Créditos deben ir en grupo 1.");
       return;
     }
 
     if (type === "CREDITS" && reqForm.condition !== "Y") {
-      setMsgError('Créditos deben ser Obligatorio.');
+      setMsgError('Créditos deben ser "Obligatorio".');
       return;
     }
 
@@ -312,17 +317,14 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     try {
       setSavingReq(true);
 
-      const res = await fetch(
-        `${API}/api/certifications/${certCode}/requirements`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(`${API}/api/certifications/${certCode}/requirements`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data?.msg || "Error creando requerimiento");
@@ -337,7 +339,6 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     }
   };
 
-  // ===== Actions: Delete requirement =====
   const handleDeleteRequirement = async (requirementId) => {
     resetMsgs();
     const ok = window.confirm("¿Eliminar este requerimiento?");
@@ -353,8 +354,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       );
 
       const data = await res.json();
-      if (!res.ok)
-        throw new Error(data?.msg || "Error eliminando requerimiento");
+      if (!res.ok) throw new Error(data?.msg || "Error eliminando requerimiento");
 
       setMsgOk("Requerimiento eliminado.");
       await refreshAll();
@@ -363,7 +363,114 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     }
   };
 
-  // ===== Render guards =====
+  const startEditRequirement = (r) => {
+    resetMsgs();
+    setAddingReq(false);
+    setEditingReqId(r.requirementId);
+
+    if (r.type === "CREDITS") {
+      setEditReqForm({
+        type: "CREDITS",
+        creditsRequired: String(r.creditsRequired ?? ""),
+        courseInput: "",
+      });
+      return;
+    }
+
+    const currentCourseCode = r?.course?.courseCode ?? "";
+    const currentCourseName = r?.course?.name ?? "";
+    setEditReqForm({
+      type: "COURSE",
+      creditsRequired: "",
+      courseInput: currentCourseCode ? `${currentCourseCode} - ${currentCourseName}` : "",
+    });
+  };
+
+  const cancelEditRequirement = () => {
+    resetMsgs();
+    setEditingReqId(null);
+    setEditReqForm({ type: "", creditsRequired: "", courseInput: "" });
+  };
+
+  const tryPatch = async (urls, body) => {
+    let lastErr = null;
+
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) return { ok: true, data };
+
+        lastErr = new Error(data?.msg || "Error actualizando requerimiento");
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+
+    return { ok: false, error: lastErr || new Error("Error actualizando requerimiento") };
+  };
+
+  const saveEditRequirement = async (requirementId) => {
+    resetMsgs();
+
+    try {
+      setSavingEditReq(true);
+
+      if (editReqForm.type === "CREDITS") {
+        const creditsNum = Number(editReqForm.creditsRequired);
+        if (!Number.isFinite(creditsNum) || creditsNum <= 0) {
+          setMsgError("Créditos debe ser un número mayor a 0.");
+          return;
+        }
+
+        const urls = [
+          `${API}/api/certifications/${certCode}/requirements/${requirementId}`,
+          `${API}/api/certifications/${certCode}/requirements/${requirementId}/credits`,
+        ];
+
+        const result = await tryPatch(urls, { creditsRequired: creditsNum });
+        if (!result.ok) throw result.error;
+
+        setMsgOk("Requerimiento actualizado.");
+        setEditingReqId(null);
+        await refreshAll();
+        return;
+      }
+
+      if (editReqForm.type === "COURSE") {
+        const courseCode = parseCourseCode(editReqForm.courseInput);
+        if (!courseCode) {
+          setMsgError("Selecciona o escribe un curso válido.");
+          return;
+        }
+
+        const urls = [
+          `${API}/api/certifications/${certCode}/requirements/${requirementId}`,
+          `${API}/api/certifications/${certCode}/requirements/${requirementId}/course`,
+        ];
+
+        const result = await tryPatch(urls, { courseCode });
+        if (!result.ok) throw result.error;
+
+        setMsgOk("Requerimiento actualizado.");
+        setEditingReqId(null);
+        await refreshAll();
+      }
+    } catch (err) {
+      setMsgError(err.message || "Error actualizando requerimiento");
+    } finally {
+      setSavingEditReq(false);
+    }
+  };
+
   if (msgError && !certification && !loadingCert) {
     return <div className="alert alert-danger">{msgError}</div>;
   }
@@ -372,111 +479,108 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     return <div className="alert alert-secondary">Cargando...</div>;
   }
 
+  const ownerUnitOptions = OWNER_UNIT_OPTIONS.length
+    ? OWNER_UNIT_OPTIONS
+    : Array.from(new Set([generalForm.ownerUnit, certification.ownerUnit].filter(Boolean)));
+
   return (
     <div>
-      {/* Top actions */}
-      <div className="d-flex justify-content-end mb-3">
+      <div className="d-flex justify-content-end mb-3 gap-2">
         {!isEditingGeneral ? (
           <button
             type="button"
-            className="btn btn-outline-primary"
+            className="btn btn-link btn-ghost d-inline-flex align-items-center justify-content-center btn-icon"
             onClick={startEditGeneral}
-            style={{ borderRadius: 10, fontWeight: 700 }}
+            title="Editar información general"
           >
-            ✏️ Editar
+            <i className="bi bi-pencil"></i>
           </button>
         ) : (
-          <div className="d-flex gap-2">
+          <>
             <button
               type="button"
               className="btn btn-outline-secondary"
               onClick={cancelEditGeneral}
               disabled={savingGeneral}
-              style={{ borderRadius: 10, fontWeight: 700 }}
             >
               Cancelar
             </button>
 
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-primary d-inline-flex align-items-center gap-2"
               onClick={saveGeneral}
               disabled={savingGeneral}
-              style={{ borderRadius: 10, fontWeight: 800 }}
             >
-              {savingGeneral ? "Guardando..." : "Guardar"}
+              <span>{savingGeneral ? "Guardando..." : "Guardar"}</span>
+              <i className="bi bi-check2"></i>
             </button>
-          </div>
+          </>
         )}
       </div>
 
-      {/* Messages */}
       {msgError && <div className="alert alert-danger">{msgError}</div>}
       {msgOk && <div className="alert alert-success">{msgOk}</div>}
 
       {/* Info general */}
-      <div className="row g-3">
-        <div className="col-md-3">
-          <div className="ds-labelMuted">Código</div>
-          <div style={{ fontWeight: 800 }}>{certification.certCode}</div>
-        </div>
+      <div className="ds-info-card">
+        <div className="row g-3">
+          <div className="col-md-3">
+            <div className="ds-info-label">Código</div>
+            <div className="ds-info-value">{certification.certCode}</div>
+          </div>
 
-        <div className="col-md-9">
-          <div className="ds-labelMuted">Nombre</div>
-          {!isEditingGeneral ? (
-            <div className="ds-titleBlue" style={{ fontWeight: 800 }}>
-              {certification.name}
-            </div>
-          ) : (
-            <input
-              className="form-control ds-input"
-              value={generalForm.name}
-              onChange={(e) =>
-                setGeneralForm((p) => ({ ...p, name: e.target.value }))
-              }
-            />
-          )}
-        </div>
+          <div className="col-md-9">
+            <div className="ds-info-label">Nombre</div>
+            {!isEditingGeneral ? (
+              <div className="ds-info-value">{certification.name}</div>
+            ) : (
+              <input
+                className="form-control ds-input"
+                value={generalForm.name}
+                onChange={(e) => setGeneralForm((p) => ({ ...p, name: e.target.value }))}
+              />
+            )}
+          </div>
 
-        <div className="col-md-4">
-          <div className="ds-labelMuted">Campus</div>
-          {!isEditingGeneral ? (
-            <div style={{ fontWeight: 700 }}>{certification.campus || "-"}</div>
-          ) : (
-            <select
-              className="form-select ds-select"
-              value={generalForm.campus}
-              onChange={(e) =>
-                setGeneralForm((p) => ({ ...p, campus: e.target.value }))
-              }
-              disabled={role !== "admin"}
-              title={
-                role !== "admin"
-                  ? "Solo admin puede modificar campus"
-                  : "Selecciona campus"
-              }
-            >
-              <option value="Santiago">Santiago</option>
-              <option value="Concepción">Concepción</option>
-            </select>
-          )}
-        </div>
+          <div className="col-md-4">
+            <div className="ds-info-label">Campus</div>
+            {!isEditingGeneral ? (
+              <div className="ds-info-value">{certification.campus || "-"}</div>
+            ) : (
+              <select
+                className="form-select ds-select"
+                value={generalForm.campus}
+                onChange={(e) => setGeneralForm((p) => ({ ...p, campus: e.target.value }))}
+                disabled={role !== "admin"}
+                title={role !== "admin" ? "Solo admin puede modificar campus" : "Selecciona campus"}
+              >
+                <option value="Santiago">Santiago</option>
+                <option value="Concepción">Concepción</option>
+              </select>
+            )}
+          </div>
 
-        <div className="col-md-8">
-          <div className="ds-labelMuted">Unidad</div>
-          {!isEditingGeneral ? (
-            <div style={{ fontWeight: 700 }}>
-              {certification.ownerUnit || "-"}
-            </div>
-          ) : (
-            <input
-              className="form-control ds-input"
-              value={generalForm.ownerUnit}
-              onChange={(e) =>
-                setGeneralForm((p) => ({ ...p, ownerUnit: e.target.value }))
-              }
-            />
-          )}
+          <div className="col-md-8">
+            <div className="ds-info-label">Unidad</div>
+            {!isEditingGeneral ? (
+              <div className="ds-info-value">{certification.ownerUnit || "-"}</div>
+            ) : (
+              <select
+                className="form-select ds-select"
+                value={generalForm.ownerUnit}
+                onChange={(e) => setGeneralForm((p) => ({ ...p, ownerUnit: e.target.value }))}
+              >
+                {ownerUnitOptions.length === 0 && <option value="">Sin unidad</option>}
+
+                {ownerUnitOptions.map((u) => (
+                  <option key={u} value={u}>
+                    {u}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
         </div>
       </div>
 
@@ -485,47 +589,141 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       {/* Requirements */}
       <div className="d-flex align-items-center justify-content-between mb-2">
         <h6 style={{ fontWeight: 900, margin: 0 }}>Requerimientos</h6>
+
+        {!addingReq && editingReqId === null && (
+          <button
+            type="button"
+            className="btn btn-outline-secondary d-inline-flex align-items-center justify-content-between ds-btn-sb"
+            onClick={startAddRequirement}
+          >
+            <span>Agregar requerimiento</span>
+            <i className="bi bi-plus"></i>
+          </button>
+        )}
       </div>
 
       {loadingReq ? (
         <div className="alert alert-secondary">Cargando requerimientos...</div>
       ) : (
         <div className="table-responsive">
-          <table className="table table-hover align-middle w-100">
+          <table className="table table-hover align-middle w-100 ds-req-table">
             <thead className="table-light">
               <tr>
-                <th style={{ width: 110 }}>Grupo</th>
-                <th style={{ width: 200 }}>Tipo</th>
-                <th>Valor</th>
-                <th style={{ width: 180 }}>Condición</th>
-                <th className="text-end" style={{ width: 140 }}>
+                <th className="text-center" style={{ width: 110 }}>
+                  Grupo
+                </th>
+                <th className="text-center" style={{ width: 200 }}>
+                  Tipo
+                </th>
+                <th className="text-center">Valor</th>
+                <th className="text-center" style={{ width: 180 }}>
+                  Condición
+                </th>
+                <th className="text-center" style={{ width: 140 }}>
                   Acciones
                 </th>
               </tr>
             </thead>
 
             <tbody>
-              {requirements.map((r) => (
-                <tr key={r.requirementId}>
-                  <td style={{ fontWeight: 800 }}>{r.group}</td>
-                  <td>{typeLabel(r.type)}</td>
-                  <td>{formatReqValue(r)}</td>
-                  <td>{conditionLabel(r.condition)}</td>
-                  <td className="text-end">
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-danger"
-                      style={{ borderRadius: 10 }}
-                      onClick={() => handleDeleteRequirement(r.requirementId)}
-                      title="Eliminar"
-                    >
-                      🗑
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {requirements.map((r) => {
+                const isEditingRow = editingReqId === r.requirementId;
 
-              {/* Empty state */}
+                return (
+                  <tr key={r.requirementId}>
+                    <td className="text-center" style={{ fontWeight: 800 }}>
+                      {r.group}
+                    </td>
+
+                    <td className="text-center">{typeLabel(r.type)}</td>
+
+                    <td>
+                      {!isEditingRow ? (
+                        <div className="text-center">{formatReqValue(r)}</div>
+                      ) : r.type === "CREDITS" ? (
+                        <input
+                          className="form-control ds-input"
+                          type="number"
+                          min="0"
+                          value={editReqForm.creditsRequired}
+                          onChange={(e) =>
+                            setEditReqForm((p) => ({ ...p, creditsRequired: e.target.value }))
+                          }
+                        />
+                      ) : (
+                        <>
+                          <input
+                            className="form-control ds-input"
+                            list="courses-datalist-edit"
+                            placeholder="Escribe código o nombre del curso..."
+                            value={editReqForm.courseInput}
+                            onChange={(e) =>
+                              setEditReqForm((p) => ({ ...p, courseInput: e.target.value }))
+                            }
+                            disabled={loadingCourses}
+                          />
+                          <datalist id="courses-datalist-edit">
+                            {datalistOptions.map((o) => (
+                              <option key={o.key} value={o.value}>
+                                {o.label}
+                              </option>
+                            ))}
+                          </datalist>
+                        </>
+                      )}
+                    </td>
+
+                    <td className="text-center">{conditionLabel(r.condition)}</td>
+
+                    <td className="text-center">
+                      {!isEditingRow ? (
+                        <div className="d-inline-flex gap-2">
+                          <button
+                            type="button"
+                            className="btn btn-link btn-ghost btn-icon d-inline-flex align-items-center justify-content-center"
+                            onClick={() => startEditRequirement(r)}
+                            title="Editar requerimiento"
+                          >
+                            <i className="bi bi-pencil"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            className="btn btn-link btn-ghost btn-icon d-inline-flex align-items-center justify-content-center"
+                            onClick={() => handleDeleteRequirement(r.requirementId)}
+                            title="Eliminar requerimiento"
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="d-inline-flex gap-2">
+                          <button
+                            type="button"
+                            className="btn btn-link btn-ghost btn-icon d-inline-flex align-items-center justify-content-center"
+                            onClick={cancelEditRequirement}
+                            title="Cancelar"
+                            disabled={savingEditReq}
+                          >
+                            <i className="bi bi-x-lg"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            className="btn btn-link btn-ghost btn-icon d-inline-flex align-items-center justify-content-center"
+                            onClick={() => saveEditRequirement(r.requirementId)}
+                            title="Guardar"
+                            disabled={savingEditReq}
+                          >
+                            <i className="bi bi-check2"></i>
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+
               {requirements.length === 0 && !addingReq && (
                 <tr>
                   <td colSpan={5} className="text-muted">
@@ -535,33 +733,16 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
               )}
 
               {/* Add row */}
-              {!addingReq ? (
+              {addingReq && (
                 <tr>
-                  <td colSpan={5}>
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary"
-                      onClick={startAddRequirement}
-                      style={{ borderRadius: 10, fontWeight: 700 }}
-                    >
-                      ➕ Agregar requerimiento
-                    </button>
-                  </td>
-                </tr>
-              ) : (
-                <tr>
-                  {/* Grupo */}
-                  <td>
+                  <td className="text-center">
                     <select
                       className="form-select ds-select"
                       value={reqForm.group}
                       onChange={(e) =>
-                        setReqForm((p) => ({
-                          ...p,
-                          group: Number(e.target.value),
-                        }))
+                        setReqForm((p) => ({ ...p, group: Number(e.target.value) }))
                       }
-                      disabled={reqForm.type === "CREDITS"} // créditos siempre group 1
+                      disabled={reqForm.type === "CREDITS"}
                     >
                       <option value={1}>1</option>
                       <option value={2}>2</option>
@@ -569,8 +750,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                     </select>
                   </td>
 
-                  {/* Tipo */}
-                  <td>
+                  <td className="text-center">
                     <select
                       className="form-select ds-select"
                       value={reqForm.type}
@@ -579,7 +759,6 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                         setReqForm((p) => ({
                           ...p,
                           type: nextType,
-                          // reglas backend:
                           group: nextType === "CREDITS" ? 1 : p.group,
                           condition: nextType === "CREDITS" ? "Y" : p.condition,
                           creditsRequired: "",
@@ -595,7 +774,6 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                     </select>
                   </td>
 
-                  {/* Valor */}
                   <td>
                     {reqForm.type === "CREDITS" ? (
                       <input
@@ -605,28 +783,22 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                         placeholder="Ej: 24"
                         value={reqForm.creditsRequired}
                         onChange={(e) =>
-                          setReqForm((p) => ({
-                            ...p,
-                            creditsRequired: e.target.value,
-                          }))
+                          setReqForm((p) => ({ ...p, creditsRequired: e.target.value }))
                         }
                       />
                     ) : (
                       <>
                         <input
                           className="form-control ds-input"
-                          list="courses-datalist"
+                          list="courses-datalist-add"
                           placeholder="Escribe código o nombre del curso..."
                           value={reqForm.courseInput}
                           onChange={(e) =>
-                            setReqForm((p) => ({
-                              ...p,
-                              courseInput: e.target.value,
-                            }))
+                            setReqForm((p) => ({ ...p, courseInput: e.target.value }))
                           }
                           disabled={loadingCourses}
                         />
-                        <datalist id="courses-datalist">
+                        <datalist id="courses-datalist-add">
                           {datalistOptions.map((o) => (
                             <option key={o.key} value={o.value}>
                               {o.label}
@@ -636,58 +808,45 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
 
                         {courses.length === 0 && !loadingCourses && (
                           <div className="text-muted mt-2" style={{ fontSize: 12 }}>
-                            No se pudieron cargar cursos (o tu rol no tiene acceso).
-                            Puedes escribir el código exacto igualmente.
+                            No se pudieron cargar cursos (o tu rol no tiene acceso). Puedes escribir el código exacto igualmente.
                           </div>
                         )}
                       </>
                     )}
                   </td>
 
-                  {/* Condición */}
-                  <td>
+                  <td className="text-center">
                     <select
                       className="form-select ds-select"
                       value={reqForm.condition}
-                      onChange={(e) =>
-                        setReqForm((p) => ({
-                          ...p,
-                          condition: e.target.value,
-                        }))
-                      }
-                      disabled={reqForm.type === "CREDITS"} // backend: credits siempre Y
-                      title={
-                        reqForm.type === "CREDITS"
-                          ? 'Créditos siempre es "Obligatorio"'
-                          : "Selecciona condición"
-                      }
+                      onChange={(e) => setReqForm((p) => ({ ...p, condition: e.target.value }))}
+                      disabled={reqForm.type === "CREDITS"}
+                      title={reqForm.type === "CREDITS" ? 'Créditos siempre es "Obligatorio"' : "Selecciona condición"}
                     >
                       <option value="Y">Obligatorio</option>
                       <option value="O">Electivo</option>
                     </select>
                   </td>
 
-                  {/* Acciones */}
-                  <td className="text-end">
-                    <div className="d-flex justify-content-end gap-2">
+                  <td className="text-center">
+                    <div className="d-inline-flex gap-2">
                       <button
                         type="button"
                         className="btn btn-outline-secondary"
                         onClick={cancelAddRequirement}
                         disabled={savingReq}
-                        style={{ borderRadius: 10, fontWeight: 700 }}
                       >
                         Cancelar
                       </button>
 
                       <button
                         type="button"
-                        className="btn btn-primary"
+                        className="btn btn-primary d-inline-flex align-items-center gap-2"
                         onClick={saveAddRequirement}
                         disabled={savingReq}
-                        style={{ borderRadius: 10, fontWeight: 800 }}
                       >
-                        {savingReq ? "Guardando..." : "Guardar"}
+                        <span>{savingReq ? "Guardando..." : "Guardar"}</span>
+                        <i className="bi bi-check2"></i>
                       </button>
                     </div>
                   </td>

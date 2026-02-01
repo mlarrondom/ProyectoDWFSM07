@@ -1,0 +1,8 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="30" cy="30" r="22" fill="#0f172a"/>
+  
+  <path d="M20 30L27 37L40 23" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <text x="65" y="39" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="28" fill="#0f172a">CERT</text>
+  <text x="140" y="39" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="28" fill="#2dd4bf">IFY</text>
+</svg>

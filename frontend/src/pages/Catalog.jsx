@@ -8,7 +8,7 @@ export default function Catalog() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ filtro binario por sede
+  // filtro binario por sede
   const [campus, setCampus] = useState("Santiago");
 
   const load = async () => {
@@ -16,7 +16,7 @@ export default function Catalog() {
     setLoading(true);
 
     try {
-      // ✅ público: sin token
+      // público: sin token
       const res = await fetch(`${API}/api/certifications`);
       const data = await res.json();
 
@@ -45,7 +45,7 @@ export default function Catalog() {
       .sort((a, b) => (a.certCode || 0) - (b.certCode || 0));
   }, [certifications, campus]);
 
-  // ✅ agrupar por área (ownerUnit)
+  // agrupar por área (ownerUnit)
   const groupedByArea = useMemo(() => {
     const acc = {};
     for (const c of filtered) {
@@ -57,7 +57,6 @@ export default function Catalog() {
   }, [filtered]);
 
   const areaEntries = useMemo(() => {
-    // orden alfabético de áreas
     return Object.entries(groupedByArea).sort(([a], [b]) => a.localeCompare(b));
   }, [groupedByArea]);
 
@@ -72,53 +71,51 @@ export default function Catalog() {
   };
 
   return (
-    <div className="ds-page">
+    <div className="container py-3">
       {/* Header + filtro binario */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-        <div>
-          <h2 className="m-0">Catálogo de Certificaciones</h2>
-          <div className="text-muted" style={{ fontSize: 14 }}>
-            Selecciona sede para ver la oferta disponible.
+      <div className="ds-card catalog-toolbar">
+        <div className="d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <h2 className="m-0 catalog-title">Catálogo de Certificaciones</h2>
+            <div className="text-muted catalog-subtitle">
+              Selecciona sede para ver la oferta disponible.
+            </div>
           </div>
-        </div>
 
-        <div className="btn-group" role="group" aria-label="Filtro por sede">
-          <button
-            type="button"
-            className={`btn ${campus === "Santiago" ? "btn-primary" : "btn-outline-primary"}`}
-            onClick={() => setCampus("Santiago")}
-            style={{ fontWeight: 800 }}
-          >
-            Santiago
-          </button>
-          <button
-            type="button"
-            className={`btn ${campus === "Concepción" ? "btn-primary" : "btn-outline-primary"}`}
-            onClick={() => setCampus("Concepción")}
-            style={{ fontWeight: 800 }}
-          >
-            Concepción
-          </button>
+          <div className="btn-group" role="group" aria-label="Filtro por sede">
+            <button
+              type="button"
+              className={`btn ${campus === "Santiago" ? "btn-primary" : "btn-outline-secondary"} catalog-campus-btn`}
+              onClick={() => setCampus("Santiago")}
+            >
+              Santiago
+            </button>
+            <button
+              type="button"
+              className={`btn ${campus === "Concepción" ? "btn-primary" : "btn-outline-secondary"} catalog-campus-btn`}
+              onClick={() => setCampus("Concepción")}
+            >
+              Concepción
+            </button>
+          </div>
         </div>
       </div>
 
-      {loading && <div className="alert alert-info">Cargando catálogo...</div>}
-      {error && <div className="alert alert-danger">{error}</div>}
+      {loading && <div className="alert alert-info mt-3">Cargando catálogo...</div>}
+      {error && <div className="alert alert-danger mt-3">{error}</div>}
 
       {!loading && !error && filtered.length === 0 && (
-        <div className="alert alert-secondary mb-0">
+        <div className="alert alert-secondary mt-3 mb-0">
           No hay certificaciones disponibles para <b>{campus}</b>.
         </div>
       )}
 
       {/* Agrupado por Área */}
-      <div className="d-flex flex-column gap-4">
+      <div className="d-flex flex-column gap-4 mt-3">
         {areaEntries.map(([area, certs]) => (
-          <section key={area}>
+          <section key={area} className="catalog-area">
             <div className="d-flex align-items-center justify-content-between mb-2">
-              <h5 className="m-0" style={{ fontWeight: 900 }}>
-                {area}
-              </h5>
+              <h5 className="m-0 catalog-area-title">{area}</h5>
               <small className="text-muted">
                 {certs.length} {certs.length === 1 ? "certificación" : "certificaciones"}
               </small>
@@ -127,22 +124,17 @@ export default function Catalog() {
             <div className="row g-3">
               {certs.map((cert) => (
                 <div className="col-12 col-md-6 col-lg-4" key={cert.certCode}>
-                  <div className="card ds-card h-100">
-                    <div className="card-body d-flex flex-column">
+                  <div className="ds-card catalog-card h-100">
+                    <div className="d-flex flex-column h-100">
                       <div className="d-flex justify-content-between align-items-start gap-2">
-                        <h6 className="card-title m-0" style={{ fontWeight: 900 }}>
-                          {cert.name}
-                        </h6>
-                        <span
-                          className="badge text-bg-light"
-                          style={{ border: "1px solid #e5e7eb" }}
-                          title="Código certificación"
-                        >
+                        <h6 className="m-0 catalog-card-title">{cert.name}</h6>
+
+                        <span className="catalog-badge" title="Código certificación">
                           {cert.certCode}
                         </span>
                       </div>
 
-                      <div className="mt-2 text-muted" style={{ fontSize: 14 }}>
+                      <div className="mt-2 text-muted catalog-meta">
                         <div>
                           <b>Sede:</b> {cert.campus}
                         </div>
@@ -152,15 +144,13 @@ export default function Catalog() {
                       </div>
 
                       <div className="mt-auto pt-3 d-flex gap-2">
-                        {/* Si ya tienes una página pública de detalle, mantenemos el link */}
                         <Link
-                          className="btn btn-outline-primary"
+                          className="btn btn-outline-secondary"
                           to={`/certifications/${cert.certCode}`}
                         >
                           Ver detalle
                         </Link>
 
-                        {/* Para el carro de compra lo conectamos después */}
                         <button className="btn btn-primary" type="button">
                           Comprar
                         </button>
@@ -176,3 +166,5 @@ export default function Catalog() {
     </div>
   );
 }
+
+

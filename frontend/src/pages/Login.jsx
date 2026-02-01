@@ -12,7 +12,7 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();               
+    e.preventDefault();
     setError("");
     setSubmitting(true);
 
@@ -28,7 +28,7 @@ export default function Login() {
       if (!res.ok) {
         setError(data?.msg || "Credenciales inválidas");
         setSubmitting(false);
-        return;                       
+        return;
       }
 
       const jwt = data?.token || data?.jwt || data?.accessToken;
@@ -38,9 +38,8 @@ export default function Login() {
         return;
       }
 
-      login(jwt);                     
-      navigate("/admin/certifications"); 
-
+      login(jwt);
+      navigate("/admin/certifications");
     } catch {
       setError("Error de red. Intenta nuevamente.");
       setSubmitting(false);
@@ -48,42 +47,45 @@ export default function Login() {
   };
 
   return (
-    <div className="container my-5" style={{ maxWidth: 480 }}>
-      <h2 style={{ color: "#006699" }}>Login</h2>
+    <div className="container my-5">
+      <div className="ds-card login-card">
+        <h2 className="login-title">Login</h2>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Email</label>
-          <input
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="username"
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input
+              className="form-control"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
+            />
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-          />
-        </div>
+          <div className="mb-3">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              className="form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+            />
+          </div>
 
-        <button
-          type="submit"               
-          className="btn"
-          style={{ background: "#FF6600", color: "white", borderRadius: 8 }}
-          disabled={submitting}
-        >
-          {submitting ? "Entrando..." : "Entrar"}
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="btn btn-cta login-submit"
+            disabled={submitting}
+          >
+            {submitting ? "Entrando..." : "Entrar"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
+
+
