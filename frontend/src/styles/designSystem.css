@@ -530,3 +530,164 @@ body {
 .ds-btn-sb {
   min-width: 220px;
 }
+
+/* =========================================
+   HOVERS (consistentes en todo el sistema)
+   ========================================= */
+
+/* Cancelar / Outline */
+.btn-outline-secondary:hover {
+  background: var(--ds-bg) !important;
+  border-color: var(--ds-border) !important;
+  transform: translateY(-2px);
+}
+
+/* Primario (Guardar cambios) */
+.btn-primary:hover {
+  background-color: #0f766e !important; /* tono un poco más oscuro que --ds-primary */
+  transform: translateY(-2px);
+}
+
+/* (Opcional) Para que se sienta clickeable también al foco */
+.btn-outline-secondary:focus,
+.btn-primary:focus,
+.btn-cta:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.25) !important;
+}
+
+/* =========================================
+   ICONOS DE ACCIÓN (Editar / Eliminar)
+   ========================================= */
+
+/* Base: ambos íconos en color oscuro */
+.btn-icon {
+  color: var(--ds-primary-dark);
+}
+
+/* EDITAR: hover verde menta (ya alineado al sistema) */
+.btn-icon:hover {
+  color: var(--ds-cta);
+}
+
+/* ELIMINAR: estado normal oscuro */
+.btn-icon.text-danger {
+  color: var(--ds-primary-dark) !important;
+}
+
+/* ELIMINAR: hover rojo */
+.btn-icon.text-danger:hover {
+  color: #b42318 !important; /* rojo peligro consistente */
+}
+
+/* =========================================
+   ICONOS DE ACCIÓN – COLOR BASE UNIFICADO
+   ========================================= */
+
+/* Estado base: TODOS los iconos iguales */
+.btn-link.btn-icon {
+  color: var(--ds-primary-dark) !important;
+}
+
+/* EDITAR: hover verde menta */
+.btn-link.btn-icon:hover {
+  color: var(--ds-cta) !important;
+}
+
+/* ELIMINAR: hover rojo */
+.btn-link.btn-icon.text-danger:hover {
+  color: #b42318 !important;
+}
+
+/* =========================================
+   MODAL XXL (para CertificationDetail)
+   ========================================= */
+.ds-modal-xxl {
+  max-width: 1200px; /* ajustable */
+  width: min(1200px, calc(100vw - 48px));
+}
+
+/* Si tu modal tiene scroll interno, esto ayuda a no “crecer” infinito */
+.ds-modal.ds-modal-xxl .ds-modal-body {
+  max-height: calc(100vh - 220px);
+  overflow: auto;
+}
+
+/* =========================================
+   REQUIREMENTS TABLE – más compacta
+   ========================================= */
+.ds-req-table {
+  font-size: 0.92rem;
+}
+
+.ds-req-table thead th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.ds-req-table tbody td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  vertical-align: middle;
+}
+
+/* Opcional: reduce un poco el alto de filas al hover */
+.ds-req-table.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Valor tipo COURSE: 2 líneas ordenadas */
+.ds-req-value .ds-req-code {
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.ds-req-value .ds-req-name {
+  font-size: 0.82rem;
+  line-height: 1.2;
+  max-width: 420px;       /* evita que se expanda infinito */
+  white-space: nowrap;    /* 1 línea */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* En pantallas más chicas, permite 2 líneas (mejor legibilidad) */
+@media (max-width: 992px) {
+  .ds-req-value .ds-req-name {
+    white-space: normal;
+  }
+}
+
+/* =========================================
+   Link discreto “Agregar requerimiento” (Opción B)
+   ========================================= */
+.ds-add-link {
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--ds-primary-dark) !important;
+  font-weight: 600;
+}
+
+.ds-add-link:hover {
+  color: var(--ds-cta) !important;
+  background: rgba(13, 148, 136, 0.08);
+}
+
+/* =========================================
+   ICONOS DE ACCIÓN – base unificada + hover
+   (si ya lo agregaste antes, déjalo solo una vez)
+   ========================================= */
+.btn-link.btn-icon {
+  color: var(--ds-primary-dark) !important;
+}
+
+.btn-link.btn-icon:hover {
+  color: var(--ds-cta) !important;
+}
+
+/* Eliminar: hover rojo */
+.btn-link.btn-icon.text-danger:hover {
+  color: #b42318 !important;
+}

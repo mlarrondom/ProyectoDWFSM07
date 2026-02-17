@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const auth = require('../middlewares/auth');
-const resolveCampus = require('../middlewares/resolveCampus');
-const authorizeCertificationCampus = require('../middlewares/authorizeCertificationCampus');
+const authorizeRoles = require('../middlewares/authorizeRoles');
 
 const requirementRoutes = require('./requirementRoutes');
 
@@ -15,59 +14,16 @@ const {
   deleteCertification,
 } = require('../controllers/certificationController');
 
-/**
- * ============================
- * RUTA PÚBLICA (CATÁLOGO)
- * ============================
- */
-
-/**
- * @openapi
- * /api/certifications:
- *   get:
- *     tags:
- *       - Certifications
- *     summary: Listar certificaciones (público)
- *     description: Obtiene todas las certificaciones disponibles (sin autenticación).
- *     responses:
- *       200:
- *         description: Lista de certificaciones
- */
+// ✅ Público
 router.get('/', getAllCertifications);
+router.get('/:certCode', getCertificationByCertCode);
 
-/**
- * ============================
- * RUTAS PROTEGIDAS (ADMIN)
- * ============================
- */
+// ✅ Requirements (público GET, admin resto) -> lo decide requirementRoutes
+router.use('/:certCode/requirements', requirementRoutes);
 
-// Desde aquí TODO requiere token
-router.use(auth);
-router.use(resolveCampus);
-
-/**
- * Crear certificación
- */
-router.post('/', createCertification);
-
-/**
- * Obtener certificación por certCode
- */
-router.get('/:certCode', authorizeCertificationCampus, getCertificationByCertCode);
-
-/**
- * Actualizar certificación
- */
-router.put('/:certCode', authorizeCertificationCampus, updateCertification);
-
-/**
- * Eliminar certificación
- */
-router.delete('/:certCode', authorizeCertificationCampus, deleteCertification);
-
-/**
- * Rutas anidadas de requisitos
- */
-router.use('/:certCode/requirements', authorizeCertificationCampus, requirementRoutes);
+// ✅ Admin
+router.post('/', auth, authorizeRoles('admin'), createCertification);
+router.put('/:certCode', auth, authorizeRoles('admin'), updateCertification);
+router.delete('/:certCode', auth, authorizeRoles('admin'), deleteCertification);
 
 module.exports = router;

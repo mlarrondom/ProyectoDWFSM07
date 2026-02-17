@@ -13,13 +13,8 @@ const CONDITION_OPTIONS = [
   { value: "O", label: "Electivo" },
 ];
 
-/*
-  Owner Units:
-  Me falta el modelo de Certification (o el enum/constante) para cargar el listado real.
-  Por ahora:
-  - Si no hay listado, el select muestra solo el valor actual (evita inventar valores).
-  - Cuando me pases el modelo, lo reemplazamos por el enum real.
-*/
+// No inventamos opciones de unidad: si no hay enum disponible aquí,
+// mostramos solo el valor actual (y lo mejoramos después si quieres).
 const OWNER_UNIT_OPTIONS = [];
 
 export default function CertificationsDetail({ certCode, onUpdated }) {
@@ -42,7 +37,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     setMsgError("");
   };
 
-  // Edit general
+  // ====== General edit ======
   const [isEditingGeneral, setIsEditingGeneral] = useState(false);
   const [savingGeneral, setSavingGeneral] = useState(false);
   const [generalForm, setGeneralForm] = useState({
@@ -51,7 +46,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     ownerUnit: "",
   });
 
-  // Add requirement row
+  // ====== Add requirement row ======
   const [addingReq, setAddingReq] = useState(false);
   const [savingReq, setSavingReq] = useState(false);
   const [reqForm, setReqForm] = useState({
@@ -62,7 +57,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     courseInput: "",
   });
 
-  // Edit requirement
+  // ====== Edit requirement ======
   const [editingReqId, setEditingReqId] = useState(null);
   const [savingEditReq, setSavingEditReq] = useState(false);
   const [editReqForm, setEditReqForm] = useState({
@@ -70,6 +65,13 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     creditsRequired: "",
     courseInput: "",
   });
+
+  const headersAuth = useMemo(() => {
+    return {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+  }, [token]);
 
   const fetchCertification = async () => {
     if (!certCode || !token) return;
@@ -108,9 +110,12 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       setLoadingReq(true);
       resetMsgs();
 
-      const res = await fetch(`${API}/api/certifications/${certCode}/requirements`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `${API}/api/certifications/${certCode}/requirements`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data?.msg || "Error cargando requerimientos");
@@ -161,19 +166,32 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [certCode, token]);
 
-  const typeLabel = (type) => TYPE_OPTIONS.find((t) => t.value === type)?.label || type;
+  const typeLabel = (type) =>
+    TYPE_OPTIONS.find((t) => t.value === type)?.label || type;
 
   const conditionLabel = (cond) =>
     CONDITION_OPTIONS.find((c) => c.value === cond)?.label || cond;
 
-  const formatReqValue = (r) => {
-    if (r.type === "CREDITS") return r.creditsRequired ?? "-";
+  const renderReqValue = (r) => {
+    if (r.type === "CREDITS") {
+      return (
+        <div className="text-left">
+          {r.creditsRequired ?? "-"}
+        </div>
+      );
+    }
+
     if (r.type === "COURSE") {
       const code = r?.course?.courseCode ?? "-";
       const name = r?.course?.name ?? "";
-      return `${code}: ${name}`.trim();
+      return (
+        <div className="ds-req-value">
+            {code} - {name || "-"}
+        </div>
+      );
     }
-    return "-";
+
+    return <div className="text-center">-</div>;
   };
 
   const datalistOptions = useMemo(() => {
@@ -190,6 +208,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     return s.split(" - ")[0].trim();
   };
 
+  // ====== General actions ======
   const startEditGeneral = () => {
     resetMsgs();
     setIsEditingGeneral(true);
@@ -221,20 +240,17 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       setSavingGeneral(true);
 
       const payload = { name, ownerUnit };
-
       if (role === "admin") payload.campus = campus;
 
       const res = await fetch(`${API}/api/certifications/${certCode}`, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers: headersAuth,
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.msg || "Error actualizando certificación");
+      if (!res.ok)
+        throw new Error(data?.msg || "Error actualizando certificación");
 
       setMsgOk("Certificación actualizada.");
       setIsEditingGeneral(false);
@@ -246,6 +262,38 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     }
   };
 
+  // ====== Delete certification (solo si no hay requirements) ======
+  const hasRequirements = (requirements?.length || 0) > 0;
+  const canDeleteCertification = !loadingReq && !hasRequirements;
+
+  const handleDeleteCertification = async () => {
+    if (!certCode || !token) return;
+    if (!canDeleteCertification) return;
+
+    const ok = window.confirm(`¿Eliminar la certificación ${certCode}?`);
+    if (!ok) return;
+
+    resetMsgs();
+
+    try {
+      const res = await fetch(`${API}/api/certifications/${certCode}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.msg || "Error eliminando certificación");
+
+      setMsgOk("Certificación eliminada. Puedes cerrar esta ventana.");
+      setCertification(null);
+      setRequirements([]);
+      onUpdated?.();
+    } catch (err) {
+      setMsgError(err.message || "Error eliminando certificación");
+    }
+  };
+
+  // ====== Requirements add ======
   const startAddRequirement = () => {
     resetMsgs();
     setAddingReq(true);
@@ -290,11 +338,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       return;
     }
 
-    const payload = {
-      group,
-      type,
-      condition: reqForm.condition,
-    };
+    const payload = { group, type, condition: reqForm.condition };
 
     if (type === "CREDITS") {
       const creditsNum = Number(reqForm.creditsRequired);
@@ -317,14 +361,14 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     try {
       setSavingReq(true);
 
-      const res = await fetch(`${API}/api/certifications/${certCode}/requirements`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        `${API}/api/certifications/${certCode}/requirements`,
+        {
+          method: "POST",
+          headers: headersAuth,
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data?.msg || "Error creando requerimiento");
@@ -339,6 +383,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     }
   };
 
+  // ====== Requirements delete ======
   const handleDeleteRequirement = async (requirementId) => {
     resetMsgs();
     const ok = window.confirm("¿Eliminar este requerimiento?");
@@ -363,6 +408,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     }
   };
 
+  // ====== Requirements edit ======
   const startEditRequirement = (r) => {
     resetMsgs();
     setAddingReq(false);
@@ -382,7 +428,9 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     setEditReqForm({
       type: "COURSE",
       creditsRequired: "",
-      courseInput: currentCourseCode ? `${currentCourseCode} - ${currentCourseName}` : "",
+      courseInput: currentCourseCode
+        ? `${currentCourseCode} - ${currentCourseName}`
+        : "",
     });
   };
 
@@ -399,10 +447,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       try {
         const res = await fetch(url, {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+          headers: headersAuth,
           body: JSON.stringify(body),
         });
 
@@ -415,7 +460,10 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
       }
     }
 
-    return { ok: false, error: lastErr || new Error("Error actualizando requerimiento") };
+    return {
+      ok: false,
+      error: lastErr || new Error("Error actualizando requerimiento"),
+    };
   };
 
   const saveEditRequirement = async (requirementId) => {
@@ -475,129 +523,176 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
     return <div className="alert alert-danger">{msgError}</div>;
   }
 
+  if (msgOk && !certification && !loadingCert) {
+    return <div className="alert alert-success">{msgOk}</div>;
+  }
+
   if (loadingCert || !certification) {
     return <div className="alert alert-secondary">Cargando...</div>;
   }
 
   const ownerUnitOptions = OWNER_UNIT_OPTIONS.length
     ? OWNER_UNIT_OPTIONS
-    : Array.from(new Set([generalForm.ownerUnit, certification.ownerUnit].filter(Boolean)));
+    : Array.from(
+        new Set([generalForm.ownerUnit, certification.ownerUnit].filter(Boolean))
+      );
 
   return (
     <div>
-      <div className="d-flex justify-content-end mb-3 gap-2">
-        {!isEditingGeneral ? (
-          <button
-            type="button"
-            className="btn btn-link btn-ghost d-inline-flex align-items-center justify-content-center btn-icon"
-            onClick={startEditGeneral}
-            title="Editar información general"
-          >
-            <i className="bi bi-pencil"></i>
-          </button>
-        ) : (
-          <>
+      {/* =========================
+          INFO GENERAL (estilo Cursos)
+         ========================= */}
+
+      <div className="d-flex align-items-start justify-content-between">
+        <div>
+          <h6 style={{ fontWeight: 900, margin: 0 }}>Información General</h6>
+        </div>
+
+        {/* Acciones arriba derecha SOLO en modo lectura */}
+        {!isEditingGeneral && (
+          <div className="d-flex gap-2">
             <button
               type="button"
-              className="btn btn-outline-secondary"
-              onClick={cancelEditGeneral}
-              disabled={savingGeneral}
+              className="btn btn-link btn-ghost d-inline-flex align-items-center justify-content-center btn-icon"
+              onClick={startEditGeneral}
+              title="Editar información general"
             >
-              Cancelar
+              <i className="bi bi-pencil-square"></i>
             </button>
 
             <button
               type="button"
-              className="btn btn-primary d-inline-flex align-items-center gap-2"
-              onClick={saveGeneral}
-              disabled={savingGeneral}
+              className="btn btn-link btn-ghost d-inline-flex align-items-center justify-content-center btn-icon text-danger"
+              onClick={handleDeleteCertification}
+              disabled={!canDeleteCertification}
+              title={
+                canDeleteCertification
+                  ? "Eliminar certificación"
+                  : "No se puede eliminar: tiene requerimientos asociados"
+              }
             >
-              <span>{savingGeneral ? "Guardando..." : "Guardar"}</span>
-              <i className="bi bi-check2"></i>
+              <i className="bi bi-trash3"></i>
             </button>
-          </>
+          </div>
         )}
       </div>
 
-      {msgError && <div className="alert alert-danger">{msgError}</div>}
-      {msgOk && <div className="alert alert-success">{msgOk}</div>}
+      {msgError && <div className="alert alert-danger mt-3">{msgError}</div>}
+      {msgOk && <div className="alert alert-success mt-3">{msgOk}</div>}
 
-      {/* Info general */}
-      <div className="ds-info-card">
-        <div className="row g-3">
-          <div className="col-md-3">
-            <div className="ds-info-label">Código</div>
-            <div className="ds-info-value">{certification.certCode}</div>
+      <div className="row g-3 mt-2">
+        <div className="col-md-4">
+          <div className="text-muted courses-meta-label">Código</div>
+          <div className="courses-meta-value">
+            {certification.certCode}
           </div>
+        </div>
 
-          <div className="col-md-9">
-            <div className="ds-info-label">Nombre</div>
-            {!isEditingGeneral ? (
-              <div className="ds-info-value">{certification.name}</div>
-            ) : (
-              <input
-                className="form-control ds-input"
-                value={generalForm.name}
-                onChange={(e) => setGeneralForm((p) => ({ ...p, name: e.target.value }))}
-              />
-            )}
-          </div>
+        <div className="col-md-8">
+          <div className="text-muted courses-meta-label">Nombre</div>
+          {!isEditingGeneral ? (
+            <div className="courses-meta-value">
+              {certification.name}
+            </div>
+          ) : (
+            <input
+              className="form-control ds-input"
+              value={generalForm.name}
+              onChange={(e) =>
+                setGeneralForm((p) => ({ ...p, name: e.target.value }))
+              }
+            />
+          )}
+        </div>
 
-          <div className="col-md-4">
-            <div className="ds-info-label">Campus</div>
-            {!isEditingGeneral ? (
-              <div className="ds-info-value">{certification.campus || "-"}</div>
-            ) : (
-              <select
-                className="form-select ds-select"
-                value={generalForm.campus}
-                onChange={(e) => setGeneralForm((p) => ({ ...p, campus: e.target.value }))}
-                disabled={role !== "admin"}
-                title={role !== "admin" ? "Solo admin puede modificar campus" : "Selecciona campus"}
-              >
-                <option value="Santiago">Santiago</option>
-                <option value="Concepción">Concepción</option>
-              </select>
-            )}
-          </div>
+        <div className="col-md-4">
+          <div className="text-muted courses-meta-label">Campus</div>
+          {!isEditingGeneral ? (
+            <div className="courses-meta-value">{certification.campus || "-"}</div>
+          ) : (
+            <select
+              className="form-select ds-selected"
+              value={generalForm.campus}
+              onChange={(e) =>
+                setGeneralForm((p) => ({ ...p, campus: e.target.value }))
+              }
+              disabled={role !== "admin"}
+              title={
+                role !== "admin"
+                  ? "Solo admin puede modificar campus"
+                  : "Selecciona campus"
+              }
+            >
+              <option value="Santiago">Santiago</option>
+              <option value="Concepción">Concepción</option>
+            </select>
+          )}
+        </div>
 
-          <div className="col-md-8">
-            <div className="ds-info-label">Unidad</div>
-            {!isEditingGeneral ? (
-              <div className="ds-info-value">{certification.ownerUnit || "-"}</div>
-            ) : (
-              <select
-                className="form-select ds-select"
-                value={generalForm.ownerUnit}
-                onChange={(e) => setGeneralForm((p) => ({ ...p, ownerUnit: e.target.value }))}
-              >
-                {ownerUnitOptions.length === 0 && <option value="">Sin unidad</option>}
-
-                {ownerUnitOptions.map((u) => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
+        <div className="col-md-8">
+          <div className="text-muted courses-meta-label">Unidad</div>
+          {!isEditingGeneral ? (
+            <div className="courses-meta-value">{certification.ownerUnit || "-"}</div>
+          ) : (
+            <select
+              className="form-select ds-select"
+              value={generalForm.ownerUnit}
+              onChange={(e) =>
+                setGeneralForm((p) => ({ ...p, ownerUnit: e.target.value }))
+              }
+            >
+              {ownerUnitOptions.length === 0 && <option value="">Sin unidad</option>}
+              {ownerUnitOptions.map((u) => (
+                <option key={u} value={u}>
+                  {u}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
+      {/* ✅ Botones de edición al FINAL de la sección de información general */}
+      {isEditingGeneral && (
+        <div className="d-flex justify-content-end gap-2 mt-4">
+          <button
+            type="button"
+            className="btn btn-outline-secondary"
+            onClick={cancelEditGeneral}
+            disabled={savingGeneral}
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-primary d-inline-flex align-items-center gap-2"
+            onClick={saveGeneral}
+            disabled={savingGeneral}
+          >
+            <span>{savingGeneral ? "Guardando..." : "Guardar"}</span>
+          </button>
+        </div>
+      )}
+
       <hr className="my-4" />
 
-      {/* Requirements */}
+      {/* =========================
+          REQUERIMIENTOS
+         ========================= */}
       <div className="d-flex align-items-center justify-content-between mb-2">
         <h6 style={{ fontWeight: 900, margin: 0 }}>Requerimientos</h6>
 
+        {/* Opción B: link discreto que activa fila al final */}
         {!addingReq && editingReqId === null && (
           <button
             type="button"
-            className="btn btn-outline-secondary d-inline-flex align-items-center justify-content-between ds-btn-sb"
+            className="btn btn-link d-inline-flex align-items-center gap-2 ds-add-link"
             onClick={startAddRequirement}
+            title="Agregar requerimiento"
           >
             <span>Agregar requerimiento</span>
-            <i className="bi bi-plus"></i>
+            <i className="bi bi-plus-lg"></i>
           </button>
         )}
       </div>
@@ -635,11 +730,11 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                       {r.group}
                     </td>
 
-                    <td className="text-center">{typeLabel(r.type)}</td>
+                    <td className="text-left">{typeLabel(r.type)}</td>
 
                     <td>
                       {!isEditingRow ? (
-                        <div className="text-center">{formatReqValue(r)}</div>
+                        renderReqValue(r)
                       ) : r.type === "CREDITS" ? (
                         <input
                           className="form-control ds-input"
@@ -647,7 +742,10 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                           min="0"
                           value={editReqForm.creditsRequired}
                           onChange={(e) =>
-                            setEditReqForm((p) => ({ ...p, creditsRequired: e.target.value }))
+                            setEditReqForm((p) => ({
+                              ...p,
+                              creditsRequired: e.target.value,
+                            }))
                           }
                         />
                       ) : (
@@ -658,7 +756,10 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                             placeholder="Escribe código o nombre del curso..."
                             value={editReqForm.courseInput}
                             onChange={(e) =>
-                              setEditReqForm((p) => ({ ...p, courseInput: e.target.value }))
+                              setEditReqForm((p) => ({
+                                ...p,
+                                courseInput: e.target.value,
+                              }))
                             }
                             disabled={loadingCourses}
                           />
@@ -673,7 +774,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                       )}
                     </td>
 
-                    <td className="text-center">{conditionLabel(r.condition)}</td>
+                    <td className="text-left">{conditionLabel(r.condition)}</td>
 
                     <td className="text-center">
                       {!isEditingRow ? (
@@ -684,16 +785,16 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                             onClick={() => startEditRequirement(r)}
                             title="Editar requerimiento"
                           >
-                            <i className="bi bi-pencil"></i>
+                            <i className="bi bi-pencil-square"></i>
                           </button>
 
                           <button
                             type="button"
-                            className="btn btn-link btn-ghost btn-icon d-inline-flex align-items-center justify-content-center"
+                            className="btn btn-link btn-ghost btn-icon text-danger d-inline-flex align-items-center justify-content-center"
                             onClick={() => handleDeleteRequirement(r.requirementId)}
                             title="Eliminar requerimiento"
                           >
-                            <i className="bi bi-trash"></i>
+                            <i className="bi bi-trash3"></i>
                           </button>
                         </div>
                       ) : (
@@ -732,7 +833,7 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                 </tr>
               )}
 
-              {/* Add row */}
+              {/* Add row (al final) */}
               {addingReq && (
                 <tr>
                   <td className="text-center">
@@ -740,7 +841,10 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                       className="form-select ds-select"
                       value={reqForm.group}
                       onChange={(e) =>
-                        setReqForm((p) => ({ ...p, group: Number(e.target.value) }))
+                        setReqForm((p) => ({
+                          ...p,
+                          group: Number(e.target.value),
+                        }))
                       }
                       disabled={reqForm.type === "CREDITS"}
                     >
@@ -783,7 +887,10 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                         placeholder="Ej: 24"
                         value={reqForm.creditsRequired}
                         onChange={(e) =>
-                          setReqForm((p) => ({ ...p, creditsRequired: e.target.value }))
+                          setReqForm((p) => ({
+                            ...p,
+                            creditsRequired: e.target.value,
+                          }))
                         }
                       />
                     ) : (
@@ -794,7 +901,10 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                           placeholder="Escribe código o nombre del curso..."
                           value={reqForm.courseInput}
                           onChange={(e) =>
-                            setReqForm((p) => ({ ...p, courseInput: e.target.value }))
+                            setReqForm((p) => ({
+                              ...p,
+                              courseInput: e.target.value,
+                            }))
                           }
                           disabled={loadingCourses}
                         />
@@ -808,7 +918,8 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
 
                         {courses.length === 0 && !loadingCourses && (
                           <div className="text-muted mt-2" style={{ fontSize: 12 }}>
-                            No se pudieron cargar cursos (o tu rol no tiene acceso). Puedes escribir el código exacto igualmente.
+                            No se pudieron cargar cursos (o tu rol no tiene acceso).
+                            Puedes escribir el código exacto igualmente.
                           </div>
                         )}
                       </>
@@ -819,9 +930,15 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                     <select
                       className="form-select ds-select"
                       value={reqForm.condition}
-                      onChange={(e) => setReqForm((p) => ({ ...p, condition: e.target.value }))}
+                      onChange={(e) =>
+                        setReqForm((p) => ({ ...p, condition: e.target.value }))
+                      }
                       disabled={reqForm.type === "CREDITS"}
-                      title={reqForm.type === "CREDITS" ? 'Créditos siempre es "Obligatorio"' : "Selecciona condición"}
+                      title={
+                        reqForm.type === "CREDITS"
+                          ? 'Créditos siempre es "Obligatorio"'
+                          : "Selecciona condición"
+                      }
                     >
                       <option value="Y">Obligatorio</option>
                       <option value="O">Electivo</option>
@@ -846,7 +963,6 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
                         disabled={savingReq}
                       >
                         <span>{savingReq ? "Guardando..." : "Guardar"}</span>
-                        <i className="bi bi-check2"></i>
                       </button>
                     </div>
                   </td>

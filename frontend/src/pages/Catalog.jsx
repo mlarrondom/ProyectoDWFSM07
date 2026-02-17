@@ -11,6 +11,9 @@ export default function Catalog() {
   // filtro binario por sede
   const [campus, setCampus] = useState("Santiago");
 
+  // ✅ filtro texto (nombre o unidad)
+  const [search, setSearch] = useState("");
+
   const load = async () => {
     setError("");
     setLoading(true);
@@ -39,26 +42,41 @@ export default function Catalog() {
     load();
   }, []);
 
-  const filtered = useMemo(() => {
-    return certifications
-      .filter((c) => c.campus === campus)
-      .sort((a, b) => (a.certCode || 0) - (b.certCode || 0));
+  const campusTotal = useMemo(() => {
+    return certifications.filter((c) => c.campus === campus).length;
   }, [certifications, campus]);
 
-  // agrupar por área (ownerUnit)
-  const groupedByArea = useMemo(() => {
+  // ✅ filtrado SOLO por texto (nombre o unidad), siempre dentro del campus
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+
+    return certifications
+      .filter((c) => c.campus === campus)
+      .filter((c) => {
+        if (!q) return true;
+
+        const name = String(c.name || "").toLowerCase();
+        const unit = String(c.ownerUnit || "Sin unidad").toLowerCase();
+
+        return name.includes(q) || unit.includes(q);
+      })
+      .sort((a, b) => (a.certCode || 0) - (b.certCode || 0));
+  }, [certifications, campus, search]);
+
+  // ✅ agrupar por unidad (ownerUnit)
+  const groupedByUnit = useMemo(() => {
     const acc = {};
     for (const c of filtered) {
-      const key = c.ownerUnit || "Sin área";
+      const key = c.ownerUnit || "Sin unidad";
       if (!acc[key]) acc[key] = [];
       acc[key].push(c);
     }
     return acc;
   }, [filtered]);
 
-  const areaEntries = useMemo(() => {
-    return Object.entries(groupedByArea).sort(([a], [b]) => a.localeCompare(b));
-  }, [groupedByArea]);
+  const unitEntries = useMemo(() => {
+    return Object.entries(groupedByUnit).sort(([a], [b]) => a.localeCompare(b));
+  }, [groupedByUnit]);
 
   const formatCLP = (value) => {
     const n = Number(value);
@@ -85,14 +103,18 @@ export default function Catalog() {
           <div className="btn-group" role="group" aria-label="Filtro por sede">
             <button
               type="button"
-              className={`btn ${campus === "Santiago" ? "btn-primary" : "btn-outline-secondary"} catalog-campus-btn`}
+              className={`btn ${
+                campus === "Santiago" ? "btn-primary" : "btn-outline-secondary"
+              } catalog-campus-btn`}
               onClick={() => setCampus("Santiago")}
             >
               Santiago
             </button>
             <button
               type="button"
-              className={`btn ${campus === "Concepción" ? "btn-primary" : "btn-outline-secondary"} catalog-campus-btn`}
+              className={`btn ${
+                campus === "Concepción" ? "btn-primary" : "btn-outline-secondary"
+              } catalog-campus-btn`}
               onClick={() => setCampus("Concepción")}
             >
               Concepción
@@ -101,70 +123,115 @@ export default function Catalog() {
         </div>
       </div>
 
-      {loading && <div className="alert alert-info mt-3">Cargando catálogo...</div>}
+      {loading && (
+        <div className="alert alert-info mt-3">Cargando catálogo...</div>
+      )}
       {error && <div className="alert alert-danger mt-3">{error}</div>}
 
-      {!loading && !error && filtered.length === 0 && (
-        <div className="alert alert-secondary mt-3 mb-0">
-          No hay certificaciones disponibles para <b>{campus}</b>.
-        </div>
-      )}
+      {!loading && !error && (
+        <>
+          {/* ✅ Surface/fondo contenedor */}
+          <div className="ds-card mt-3 catalog-surface">
+            {/* ✅ Filtro texto */}
+            <div className="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+              <div className="d-flex flex-wrap gap-2 align-items-center">
+                <input
+                  className="form-control ds-filter-input"
+                  placeholder="Filtrar por nombre o unidad..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{ minWidth: 320 }}
+                />
 
-      {/* Agrupado por Área */}
-      <div className="d-flex flex-column gap-4 mt-3">
-        {areaEntries.map(([area, certs]) => (
-          <section key={area} className="catalog-area">
-            <div className="d-flex align-items-center justify-content-between mb-2">
-              <h5 className="m-0 catalog-area-title">{area}</h5>
-              <small className="text-muted">
-                {certs.length} {certs.length === 1 ? "certificación" : "certificaciones"}
-              </small>
+                {search && (
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setSearch("")}
+                  >
+                    Limpiar
+                  </button>
+                )}
+              </div>
+
+              <div className="text-muted">
+                Mostrando <b>{filtered.length}</b> de <b>{campusTotal}</b>
+              </div>
             </div>
 
-            <div className="row g-3">
-              {certs.map((cert) => (
-                <div className="col-12 col-md-6 col-lg-4" key={cert.certCode}>
-                  <div className="ds-card catalog-card h-100">
-                    <div className="d-flex flex-column h-100">
-                      <div className="d-flex justify-content-between align-items-start gap-2">
-                        <h6 className="m-0 catalog-card-title">{cert.name}</h6>
-
-                        <span className="catalog-badge" title="Código certificación">
-                          {cert.certCode}
-                        </span>
-                      </div>
-
-                      <div className="mt-2 text-muted catalog-meta">
-                        <div>
-                          <b>Sede:</b> {cert.campus}
-                        </div>
-                        <div>
-                          <b>Precio:</b> {formatCLP(cert.price ?? 0)}
-                        </div>
-                      </div>
-
-                      <div className="mt-auto pt-3 d-flex gap-2">
-                        <Link
-                          className="btn btn-outline-secondary"
-                          to={`/certifications/${cert.certCode}`}
-                        >
-                          Ver detalle
-                        </Link>
-
-                        <button className="btn btn-primary" type="button">
-                          Comprar
-                        </button>
-                      </div>
+            {/* Estado sin resultados */}
+            {filtered.length === 0 ? (
+              <div className="alert alert-secondary mt-3 mb-0">
+                No hay certificaciones para <b>{campus}</b> con los filtros
+                actuales.
+              </div>
+            ) : (
+              // ✅ Agrupado por Unidad
+              <div className="d-flex flex-column gap-4 mt-3">
+                {unitEntries.map(([unit, certs]) => (
+                  <section key={unit} className="catalog-area">
+                    <div className="d-flex align-items-center justify-content-between mb-2">
+                      <h5 className="m-0 catalog-area-title">{unit}</h5>
+                      <small className="text-muted">
+                        {certs.length}{" "}
+                        {certs.length === 1 ? "certificación" : "certificaciones"}
+                      </small>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
+
+                    <div className="row g-3">
+                      {certs.map((cert) => (
+                        <div
+                          className="col-12 col-md-6 col-lg-4"
+                          key={cert.certCode}
+                        >
+                          <div className="ds-card catalog-card h-100">
+                            <div className="d-flex flex-column h-100">
+                              <div className="d-flex justify-content-between align-items-start gap-2">
+                                <h6 className="m-0 catalog-card-title">
+                                  {cert.name}
+                                </h6>
+
+                                <span
+                                  className="catalog-badge"
+                                  title="Código certificación"
+                                >
+                                  {cert.certCode}
+                                </span>
+                              </div>
+
+                              <div className="mt-2 text-muted catalog-meta">
+                                <div>
+                                  <b>Sede:</b> {cert.campus}
+                                </div>
+                                <div>
+                                  <b>Precio:</b> {formatCLP(cert.price ?? 0)}
+                                </div>
+                              </div>
+
+                              <div className="mt-auto pt-3 d-flex gap-2">
+                                <Link
+                                  className="btn btn-outline-secondary"
+                                  to={`/certifications/${cert.certCode}`}
+                                >
+                                  Ver detalle
+                                </Link>
+
+                                <button className="btn btn-primary" type="button">
+                                  Comprar
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
-
-

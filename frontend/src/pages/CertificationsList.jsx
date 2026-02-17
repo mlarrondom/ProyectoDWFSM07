@@ -2,6 +2,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import CertificationsDetail from "./CertificationsDetail"; // ajusta ruta si corresponde
 
+const OWNER_UNITS = [
+  "Facultad de Ingeniería",
+  "Facultad de Economía y Negocios",
+  "Facultad de Comunicaciones",
+  "DFED",
+  "Globalización",
+  "FARO",
+  "ExploraTec",
+];
+
 export default function CertificationsList() {
   const API = import.meta.env.VITE_API_URL;
   const { token, user } = useAuth();
@@ -60,9 +70,7 @@ export default function CertificationsList() {
     if (!q) return certifications;
 
     return certifications.filter((c) =>
-      String(c.name ?? "")
-        .toLowerCase()
-        .includes(q),
+      String(c.name ?? "").toLowerCase().includes(q)
     );
   }, [certifications, filterName]);
 
@@ -105,8 +113,8 @@ export default function CertificationsList() {
         ownerUnit: String(newCert.ownerUnit).trim() || undefined,
       };
 
-      if (!payload.certCode || !payload.name) {
-        setMsgError("Completa Código y Nombre.");
+      if (!payload.certCode || !payload.name || !payload.ownerUnit) {
+        setMsgError("Completa Código, Nombre y Unidad.");
         return;
       }
 
@@ -149,7 +157,10 @@ export default function CertificationsList() {
               onChange={(e) => setFilterName(e.target.value)}
             />
 
-            <button className="btn btn-cta d-flex align-items-center justify-content-between" onClick={openCreateModal}>
+            <button
+              className="btn btn-cta d-flex align-items-center justify-content-between"
+              onClick={openCreateModal}
+            >
               Agregar
               <i className="bi bi-plus-lg"></i>
             </button>
@@ -182,7 +193,9 @@ export default function CertificationsList() {
                     <th className="certs-col-code text-center">Código</th>
                     <th className="text-center">Nombre</th>
                     <th className="certs-col-campus text-center">Campus</th>
-                    <th className="text-end certs-col-actions text-center">Acciones</th>
+                    <th className="text-end certs-col-actions text-center">
+                      Acciones
+                    </th>
                   </tr>
                 </thead>
 
@@ -220,80 +233,90 @@ export default function CertificationsList() {
         <div onClick={closeCreateModal} className="ds-modal-backdrop">
           <div
             onClick={(e) => e.stopPropagation()}
-            className="ds-modal ds-modal-xl"
+            className="ds-modal ds-modal-xxl"
           >
             <div className="ds-modal-header">
               <h5 className="ds-modal-title m-0">Nueva Certificación</h5>
 
+              {/* ✅ Cerrar con ícono X */}
               <button
                 type="button"
                 onClick={closeCreateModal}
-                className="btn btn-sm btn-outline-secondary"
+                className="btn-close btn-close-white"
                 aria-label="Cerrar"
-              >
-                Cerrar
-              </button>
+              />
             </div>
 
-            <form
-              onSubmit={handleCreateCertification}
-              className="ds-modal-body"
-            >
-              <div className="row g-3">
-                <div className="col-md-3">
-                  <label className="form-label ds-label">Código</label>
-                  <input
-                    className="form-control certs-input"
-                    placeholder="Ej: 2001"
-                    value={newCert.certCode}
-                    onChange={(e) =>
-                      setNewCert((p) => ({ ...p, certCode: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
+            <form onSubmit={handleCreateCertification}>
+              <div className="ds-modal-body">
+                <div className="row g-3">
+                  <div className="col-md-3">
+                    <label className="form-label ds-label">Código</label>
+                    <input
+                      className="form-control certs-input"
+                      placeholder="Ej: 2001"
+                      value={newCert.certCode}
+                      onChange={(e) =>
+                        setNewCert((p) => ({ ...p, certCode: e.target.value }))
+                      }
+                      required
+                    />
+                  </div>
 
-                <div className="col-md-9">
-                  <label className="form-label ds-label">Nombre</label>
-                  <input
-                    className="form-control certs-input"
-                    placeholder="Nombre de la certificación"
-                    value={newCert.name}
-                    onChange={(e) =>
-                      setNewCert((p) => ({ ...p, name: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
+                  <div className="col-md-9">
+                    <label className="form-label ds-label">Nombre</label>
+                    <input
+                      className="form-control certs-input"
+                      placeholder="Nombre de la certificación"
+                      value={newCert.name}
+                      onChange={(e) =>
+                        setNewCert((p) => ({ ...p, name: e.target.value }))
+                      }
+                      required
+                    />
+                  </div>
 
-                <div className="col-md-4">
-                  <label className="form-label ds-label">Campus</label>
-                  <select
-                    className="form-select certs-select"
-                    value={newCert.campus}
-                    onChange={(e) =>
-                      setNewCert((p) => ({ ...p, campus: e.target.value }))
-                    }
-                  >
-                    <option value="Santiago">Santiago</option>
-                    <option value="Concepción">Concepción</option>
-                  </select>
-                </div>
+                  <div className="col-md-4">
+                    <label className="form-label ds-label">Campus</label>
+                    {/* ✅ ds-select para look del design system */}
+                    <select
+                      className="form-select ds-select certs-select"
+                      value={newCert.campus}
+                      onChange={(e) =>
+                        setNewCert((p) => ({ ...p, campus: e.target.value }))
+                      }
+                    >
+                      <option value="Santiago">Santiago</option>
+                      <option value="Concepción">Concepción</option>
+                    </select>
+                  </div>
 
-                <div className="col-md-8">
-                  <label className="form-label ds-label">Unidad</label>
-                  <input
-                    className="form-control certs-input"
-                    placeholder="Facultad / Unidad"
-                    value={newCert.ownerUnit}
-                    onChange={(e) =>
-                      setNewCert((p) => ({ ...p, ownerUnit: e.target.value }))
-                    }
-                  />
+                  <div className="col-md-8">
+                    <label className="form-label ds-label">Unidad</label>
+                    {/* ✅ Unidad como desplegable según enum del modelo */}
+                    <select
+                      className="form-select ds-select certs-select"
+                      value={newCert.ownerUnit}
+                      onChange={(e) =>
+                        setNewCert((p) => ({ ...p, ownerUnit: e.target.value }))
+                      }
+                      required
+                    >
+                      <option value="" disabled>
+                        Selecciona una unidad...
+                      </option>
+                      {OWNER_UNITS.map((u) => (
+                        <option key={u} value={u}>
+                          {u}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
 
-              <div className="d-flex justify-content-end gap-2 mt-4">
+              {/* ✅ Footer estándar */}
+              <div className="ds-modal-footer">
                 <button
                   type="button"
                   onClick={closeCreateModal}
@@ -320,21 +343,20 @@ export default function CertificationsList() {
         <div onClick={closeViewModal} className="ds-modal-backdrop">
           <div
             onClick={(e) => e.stopPropagation()}
-            className="ds-modal ds-modal-xl"
+            className="ds-modal ds-modal-xxl"
           >
             <div className="ds-modal-header">
               <h5 className="ds-modal-title m-0">
                 Certificación {selectedCertCode}
               </h5>
 
+              {/* ✅ Cerrar con ícono X */}
               <button
                 type="button"
                 onClick={closeViewModal}
-                className="btn btn-sm btn-outline-secondary"
+                className="btn-close btn-close-white"
                 aria-label="Cerrar"
-              >
-                Cerrar
-              </button>
+              />
             </div>
 
             <div className="ds-modal-body">

@@ -9,7 +9,7 @@ const OWNER_UNITS = [
   "DFED",
   "Globalización",
   "FARO",
-  "EsploraTec",
+  "ExploraTec",
 ];
 
 const certificationSchema = new mongoose.Schema(

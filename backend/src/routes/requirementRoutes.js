@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 
+const auth = require('../middlewares/auth');
+const authorizeRoles = require('../middlewares/authorizeRoles');
+
 const {
     createRequirement,
     getRequirementsByCertification,
@@ -9,11 +12,13 @@ const {
     deleteRequirement,
 } = require('../controllers/requirementController');
 
-router.post('/', createRequirement);
+// Público
 router.get('/', getRequirementsByCertification);
-router.patch('/:requirementId', replaceRequirementCourse);
-router.patch('/:requirementId/credits', updateCreditsRequirement);
-router.delete('/:requirementId', deleteRequirement);
 
+// Admin
+router.post('/', auth, authorizeRoles('admin'), createRequirement);
+router.patch('/:requirementId', auth, authorizeRoles('admin'), replaceRequirementCourse);
+router.patch('/:requirementId/credits', auth, authorizeRoles('admin'), updateCreditsRequirement);
+router.delete('/:requirementId', auth, authorizeRoles('admin'), deleteRequirement);
 
 module.exports = router;

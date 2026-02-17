@@ -145,11 +145,7 @@ export default function CoursesList() {
         area: String(newCourse.area).trim() || undefined,
       };
 
-      if (
-        !payload.courseCode ||
-        !payload.name ||
-        Number.isNaN(payload.credits)
-      ) {
+      if (!payload.courseCode || !payload.name || Number.isNaN(payload.credits)) {
         setMsgError("Completa courseCode, name y credits.");
         return;
       }
@@ -280,9 +276,7 @@ export default function CoursesList() {
           </div>
 
           {filtered.length === 0 ? (
-            <div className="alert alert-secondary">
-              No hay cursos para mostrar.
-            </div>
+            <div className="alert alert-secondary">No hay cursos para mostrar.</div>
           ) : (
             <div className="ds-card courses-table-card">
               <table className="table table-hover align-middle m-0">
@@ -290,12 +284,8 @@ export default function CoursesList() {
                   <tr>
                     <th className="courses-col-code text-center">Código</th>
                     <th className="text-center">Nombre</th>
-                    <th className="courses-col-credits text-center">
-                      Créditos
-                    </th>
-                    <th className="text-end courses-col-actions text-center">
-                      Acciones
-                    </th>
+                    <th className="courses-col-credits text-center">Créditos</th>
+                    <th className="text-end courses-col-actions text-center">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -331,80 +321,84 @@ export default function CoursesList() {
           <div className="ds-modal" onClick={(e) => e.stopPropagation()}>
             <div className="ds-modal-header">
               <div className="ds-modal-title">Agregar curso</div>
+
+              {/* ✅ Cerrar con ícono X */}
               <button
-                className="btn btn-sm btn-outline-secondary"
+                type="button"
+                className="btn-close btn-close-white"
+                aria-label="Cerrar"
                 onClick={closeCreate}
-              >
-                Cerrar
-              </button>
+              />
             </div>
 
-            <form onSubmit={handleCreate} className="ds-modal-body">
-              <div className="row g-2">
-                <div className="col-4">
-                  <label className="form-label">Código</label>
-                  <input
-                    className="form-control"
-                    value={newCourse.courseCode}
-                    onChange={(e) =>
-                      setNewCourse((p) => ({
-                        ...p,
-                        courseCode: e.target.value,
-                      }))
-                    }
-                    required
-                  />
-                </div>
+            <form onSubmit={handleCreate}>
+              <div className="ds-modal-body">
+                <div className="row g-2">
+                  <div className="col-4">
+                    <label className="form-label">Código</label>
+                    <input
+                      className="form-control"
+                      value={newCourse.courseCode}
+                      onChange={(e) =>
+                        setNewCourse((p) => ({
+                          ...p,
+                          courseCode: e.target.value,
+                        }))
+                      }
+                      required
+                    />
+                  </div>
 
-                <div className="col-8">
-                  <label className="form-label">Nombre</label>
-                  <input
-                    className="form-control"
-                    value={newCourse.name}
-                    onChange={(e) =>
-                      setNewCourse((p) => ({ ...p, name: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
+                  <div className="col-8">
+                    <label className="form-label">Nombre</label>
+                    <input
+                      className="form-control"
+                      value={newCourse.name}
+                      onChange={(e) =>
+                        setNewCourse((p) => ({ ...p, name: e.target.value }))
+                      }
+                      required
+                    />
+                  </div>
 
-                <div className="col-4">
-                  <label className="form-label">Créditos</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={newCourse.credits}
-                    onChange={(e) =>
-                      setNewCourse((p) => ({ ...p, credits: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
+                  <div className="col-4">
+                    <label className="form-label">Créditos</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={newCourse.credits}
+                      onChange={(e) =>
+                        setNewCourse((p) => ({ ...p, credits: e.target.value }))
+                      }
+                      required
+                    />
+                  </div>
 
-                <div className="col-8">
-                  <label className="form-label">Área (opcional)</label>
-                  <input
-                    className="form-control"
-                    value={newCourse.area}
-                    onChange={(e) =>
-                      setNewCourse((p) => ({ ...p, area: e.target.value }))
-                    }
-                    placeholder="Ej: Programación, Datos..."
-                  />
+                  <div className="col-8">
+                    <label className="form-label">Área (opcional)</label>
+                    <input
+                      className="form-control"
+                      value={newCourse.area}
+                      onChange={(e) =>
+                        setNewCourse((p) => ({ ...p, area: e.target.value }))
+                      }
+                      placeholder="Ej: Programación, Datos..."
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="d-flex gap-2 mt-4">
-                <button type="submit" className="btn btn-cta">
-                  Guardar
-                </button>
-
+              {/* ✅ Footer estándar (abajo derecha) */}
+              <div className="ds-modal-footer">
                 <button
                   type="button"
                   className="btn btn-outline-secondary"
                   onClick={closeCreate}
                 >
                   Cancelar
+                </button>
+                <button type="submit" className="btn btn-cta">
+                  Guardar
                 </button>
               </div>
             </form>
@@ -415,18 +409,17 @@ export default function CoursesList() {
       {/* ===== MODAL VER / EDITAR ===== */}
       {openView && (
         <div className="ds-modal-backdrop" onClick={closeView}>
-          <div
-            className="ds-modal ds-modal-lg"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="ds-modal ds-modal-lg" onClick={(e) => e.stopPropagation()}>
             <div className="ds-modal-header">
               <div className="ds-modal-title">Curso {selectedCode || ""}</div>
+
+              {/* ✅ Cerrar con ícono X */}
               <button
-                className="btn btn-sm btn-outline-secondary"
+                type="button"
+                className="btn-close btn-close-white"
+                aria-label="Cerrar"
                 onClick={closeView}
-              >
-                Cerrar
-              </button>
+              />
             </div>
 
             <div className="ds-modal-body">
@@ -436,58 +429,53 @@ export default function CoursesList() {
                 <>
                   {!editMode ? (
                     <>
+                      {/* Acciones arriba derecha con íconos */}
+                      <div className="d-flex justify-content-end gap-2 mb-2">
+                        <button
+                          type="button"
+                          className="btn btn-link btn-icon"
+                          title="Editar"
+                          onClick={() => setEditMode(true)}
+                        >
+                          <i className="bi bi-pencil-square" />
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn btn-link btn-icon text-danger"
+                          title="Eliminar"
+                          onClick={handleDelete}
+                        >
+                          <i className="bi bi-trash3" />
+                        </button>
+                      </div>
+
                       <div className="row g-2">
                         <div className="col-4">
-                          <div className="text-muted courses-meta-label">
-                            Código
-                          </div>
+                          <div className="text-muted courses-meta-label">Código</div>
                           <div className="courses-meta-value">
                             {courseDetail.courseCode}
                           </div>
                         </div>
 
                         <div className="col-8">
-                          <div className="text-muted courses-meta-label">
-                            Nombre
-                          </div>
-                          <div className="courses-meta-value">
-                            {courseDetail.name}
-                          </div>
+                          <div className="text-muted courses-meta-label">Nombre</div>
+                          <div className="courses-meta-value">{courseDetail.name}</div>
                         </div>
 
                         <div className="col-4">
-                          <div className="text-muted courses-meta-label">
-                            Créditos
-                          </div>
+                          <div className="text-muted courses-meta-label">Créditos</div>
                           <div className="courses-meta-value">
                             {courseDetail.credits}
                           </div>
                         </div>
 
                         <div className="col-8">
-                          <div className="text-muted courses-meta-label">
-                            Área
-                          </div>
+                          <div className="text-muted courses-meta-label">Área</div>
                           <div className="courses-meta-value">
                             {courseDetail.area || "-"}
                           </div>
                         </div>
-                      </div>
-
-                      <div className="d-flex gap-2 mt-4">
-                        <button
-                          className="btn btn-outline-secondary"
-                          onClick={() => setEditMode(true)}
-                        >
-                          Editar
-                        </button>
-
-                        <button
-                          className="btn btn-outline-secondary"
-                          onClick={handleDelete}
-                        >
-                          Eliminar
-                        </button>
                       </div>
                     </>
                   ) : (
@@ -540,17 +528,17 @@ export default function CoursesList() {
                         </div>
                       </div>
 
-                      <div className="d-flex gap-2 mt-4">
-                        <button type="submit" className="btn btn-cta">
-                          Guardar cambios
-                        </button>
-
+                      {/* ✅ Footer estándar (abajo derecha) */}
+                      <div className="ds-modal-footer">
                         <button
                           type="button"
                           className="btn btn-outline-secondary"
                           onClick={() => setEditMode(false)}
                         >
                           Cancelar
+                        </button>
+                        <button type="submit" className="btn btn-primary">
+                          Guardar cambios
                         </button>
                       </div>
                     </form>
@@ -562,6 +550,8 @@ export default function CoursesList() {
                 </div>
               )}
             </div>
+
+            {/* Cuando NO hay editMode, no mostramos footer (solo acciones arriba) */}
           </div>
         </div>
       )}
