@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { useCart } from "../context/CartContext";
+
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -6,6 +8,8 @@ export default function Catalog() {
   const [certifications, setCertifications] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { addItem } = useCart();
+
 
   // filtro binario por sede
   const [campus, setCampus] = useState("Santiago");
@@ -284,9 +288,22 @@ export default function Catalog() {
                                 Ver detalle
                               </button>
 
-                              <button className="btn btn-primary" type="button">
-                                Comprar
-                              </button>
+<button
+  className="btn btn-primary"
+  type="button"
+  onClick={() =>
+    addItem({
+      certCode: cert.certCode,
+      name: cert.name,
+      campus: cert.campus,
+      price: cert.price ?? 0,
+      quantity: 1,
+    })
+  }
+>
+  Agregar al carrito
+</button>
+
                             </div>
                           </div>
                         </div>

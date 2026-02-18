@@ -692,3 +692,421 @@ body {
   color: #b42318 !important;
 }
 
+/* Agregar al CSS global (usa variables del Design System) */
+
+.ds-footer {
+  background: var(--ds-primary-dark);
+  color: var(--ds-white);
+  font-family: var(--ds-font);
+  padding: 18px 24px;
+}
+
+.ds-footer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ds-footer-logo img {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+.ds-footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex: 1;
+  text-align: center;
+}
+
+.ds-footer-links a {
+  color: var(--ds-cta);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ds-footer-links a:hover {
+  color: var(--ds-cta-hover);
+  text-decoration: underline;
+}
+
+.ds-footer-contact {
+  white-space: nowrap;
+}
+
+.ds-footer-contact-link {
+  color: var(--ds-cta);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.ds-footer-contact-link:hover {
+  color: var(--ds-cta-hover);
+  text-decoration: underline;
+}
+
+.ds-footer-bottom {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Responsive: apila y centra en pantallas pequeñas */
+@media (max-width: 640px) {
+  .ds-footer-top {
+    justify-content: center;
+  }
+
+  .ds-footer-links {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+  }
+
+  .ds-footer-contact {
+    flex-basis: 100%;
+    text-align: center;
+  }
+}
+
+
+/* ===== HELP PAGE ===== */
+
+.help-hero {
+  background:
+    radial-gradient(900px 500px at 80% 10%, rgba(0,204,153,0.15), transparent 60%),
+    radial-gradient(900px 500px at 10% 10%, rgba(0,102,153,0.15), transparent 60%),
+    linear-gradient(180deg, rgba(0,102,153,0.05), #ffffff);
+}
+
+.help-kicker {
+  color: #006699;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.help-title {
+  font-weight: 900;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  color: #333333;
+}
+
+.help-lead {
+  font-size: 1.1rem;
+  color: #333333;
+  opacity: 0.9;
+}
+
+.help-side-card {
+  border-radius: 8px;
+}
+
+.help-side-list {
+  padding-left: 18px;
+  margin-bottom: 0;
+}
+
+.help-side-list li {
+  margin-bottom: 8px;
+}
+
+
+.help-section-title {
+  font-weight: 900;
+  font-size: 1.8rem;
+  color: #333333;
+}
+
+.help-section-subtitle {
+  color: #333333;
+  opacity: 0.75;
+}
+
+.help-faq-card {
+  border-radius: 8px;
+}
+
+.help-contact {
+  background: rgba(0,102,153,0.03);
+}
+
+.help-input {
+  border-radius: 8px;
+}
+
+
+
+/* ===== HELP PAGE CYBER TEAL ===== */
+
+.help-page {
+  background: var(--ds-bg);
+  font-family: var(--ds-font);
+}
+
+/* HERO */
+
+.help-hero {
+  background:
+    radial-gradient(800px 400px at 80% 0%, rgba(45,212,191,0.15), transparent 60%),
+    linear-gradient(180deg, rgba(13,148,136,0.05), var(--ds-bg));
+}
+
+.help-kicker {
+  color: var(--ds-primary);
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.help-title {
+  font-weight: 900;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  color: var(--ds-text-main);
+}
+
+.help-lead {
+  color: var(--ds-text-muted);
+  font-size: 1.1rem;
+}
+
+/* BOTONES */
+
+.help-btn-primary {
+  background: var(--ds-primary);
+  color: white;
+  border-radius: var(--ds-radius-sm);
+  border: none;
+}
+
+.help-btn-primary:hover {
+  background: var(--ds-primary-dark);
+  color: white;
+}
+
+.help-btn-secondary {
+  background: var(--ds-indigo);
+  color: white;
+  border-radius: var(--ds-radius-sm);
+  border: none;
+}
+
+.help-btn-secondary:hover {
+  opacity: 0.9;
+}
+
+.help-btn-cta {
+  background: var(--ds-cta);
+  color: var(--ds-primary-dark);
+  font-weight: 800;
+  border-radius: var(--ds-radius-sm);
+  border: none;
+}
+
+.help-btn-cta:hover {
+  background: var(--ds-cta-hover);
+  color: var(--ds-primary-dark);
+}
+
+/* CARDS */
+
+.help-side-card,
+.help-faq-card,
+.help-form-card {
+  background: var(--ds-white);
+  border-radius: var(--ds-radius);
+  box-shadow: var(--ds-shadow);
+  border: 1px solid var(--ds-border);
+}
+
+.help-side-list {
+  padding-left: 18px;
+}
+
+.help-section-title {
+  font-weight: 900;
+  color: var(--ds-text-main);
+}
+
+.help-section-subtitle {
+  color: var(--ds-text-muted);
+}
+
+/* CONTACTO */
+
+.help-contact {
+  background: rgba(15,23,42,0.03);
+}
+
+.help-input {
+  border-radius: var(--ds-radius-sm);
+  border: 1px solid var(--ds-border);
+}
+
+
+/* ===========================
+   HOME (Cyber Teal palette)
+   Reemplaza el <style> inline
+   =========================== */
+
+.home-hero{
+  background:
+    radial-gradient(900px 500px at 80% 15%, rgba(45,212,191,0.18), transparent 60%),
+    radial-gradient(900px 500px at 10% 10%, rgba(13,148,136,0.18), transparent 60%),
+    linear-gradient(180deg, rgba(15,23,42,0.06), var(--ds-white));
+}
+
+.home-kicker{
+  color: var(--ds-primary);
+  font-weight: 800;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  opacity: .95;
+}
+
+.home-title{
+  color: var(--ds-text-main);
+  font-weight: 900;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.home-lead{
+  color: var(--ds-text-muted);
+}
+
+.home-badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.home-badge{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  padding:10px 12px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.04);
+  border: 1px solid var(--ds-border);
+  color: var(--ds-text-main);
+  font-weight: 700;
+}
+
+.home-hero-card{
+  border-radius: var(--ds-radius);
+}
+
+.home-card-title{
+  font-weight: 900;
+  color: var(--ds-text-main);
+}
+
+.home-card-icon{
+  color: var(--ds-cta);
+  font-size: 1.4rem;
+}
+
+.home-steps{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.home-step{
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+}
+
+.home-step-dot{
+  width:32px;
+  height:32px;
+  border-radius: var(--ds-radius-sm);
+  background: rgba(45,212,191,0.22);
+  display:grid;
+  place-items:center;
+  font-weight: 900;
+  color: var(--ds-primary-dark);
+  flex:0 0 auto;
+}
+
+.home-step-title{
+  font-weight: 800;
+  color: var(--ds-text-main);
+}
+
+.home-step-text{
+  color: var(--ds-text-muted);
+}
+
+/* OJO: tu botón ya usa btn-cta, así que NO definimos .home-cta
+   para que no vuelva el naranjo por accidente */
+
+.home-section-title{
+  font-weight: 900;
+  color: var(--ds-text-main);
+  font-size: clamp(1.6rem, 2.2vw, 2rem);
+}
+
+.home-section-subtitle{
+  color: var(--ds-text-muted);
+}
+
+.home-product-card{
+  border-radius: var(--ds-radius);
+}
+
+.home-pill{
+  display:inline-flex;
+  padding:8px 12px;
+  border-radius: 999px;
+  background: rgba(99,102,241,0.12);
+  color: var(--ds-indigo);
+  font-weight: 800;
+  font-size: .85rem;
+}
+
+.home-award{
+  color: var(--ds-primary);
+  font-size: 1.8rem;
+}
+
+.home-card-desc{
+  color: var(--ds-text-muted);
+}
+
+.home-note{
+  color: var(--ds-text-muted);
+  font-size: .9rem;
+}
+
+.home-value{
+  background: rgba(15,23,42,0.03);
+}
+
+.home-icon{
+  color: var(--ds-primary);
+  font-size: 1.6rem;
+}
+
+.home-muted{
+  color: var(--ds-text-muted);
+}
+
+.home-final-cta{
+  border-radius: var(--ds-radius);
+}
+
+.home-final-title{
+  font-weight: 900;
+  color: var(--ds-text-main);
+  font-size: 1.25rem;
+}
