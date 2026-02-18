@@ -21,27 +21,22 @@ export default function Help() {
 
   return (
     <div className="help-page">
-
       {/* HERO */}
       <section className="help-hero">
         <div className="container-xxl py-5">
           <div className="row align-items-center g-5">
-
             <div className="col-12 col-lg-7">
-              <div className="help-kicker mb-3">
-                Centro de Ayuda
-              </div>
+              <div className="help-kicker mb-3">Centro de Ayuda</div>
 
               <h1 className="help-title mb-3">
                 Resuelve tus dudas antes de elegir tu certificación.
               </h1>
 
               <p className="help-lead mb-4">
-                Revisa requisitos, sedes y detalles con claridad.
-                Aquí respondemos lo más importante para que tomes una decisión informada.
+                Revisa requisitos, sedes y detalles con claridad. Aquí
+                respondemos lo más importante para que tomes una decisión
+                informada.
               </p>
-
-
             </div>
 
             <div className="col-12 col-lg-5">
@@ -54,45 +49,40 @@ export default function Help() {
                   <li>Confirmar sedes disponibles</li>
                 </ul>
 
-                <Link to="/catalog" className="btn help-btn-cta w-100 mt-3">
+                <Link to="/catalog" className="btn btn-cta w-100 mt-3">
                   Ver certificaciones
                 </Link>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-
       {/* FAQ */}
       <section className="py-5">
         <div className="container-xxl">
-
           <div className="text-center mb-5">
             <h2 className="help-section-title">Preguntas frecuentes</h2>
-            <p className="help-section-subtitle">
-              Respuestas claras y directas.
-            </p>
+            <p className="help-section-subtitle">Respuestas claras y directas.</p>
           </div>
 
           <div className="row g-4">
             {[
               {
                 q: "¿Qué estoy comprando?",
-                a: "Una certificación académica que agrupa cursos y requisitos."
+                a: "Una certificación académica que agrupa cursos y requisitos.",
               },
               {
                 q: "¿Dónde veo los requisitos?",
-                a: "En el detalle de cada certificación dentro del catálogo."
+                a: "En el detalle de cada certificación dentro del catálogo.",
               },
               {
                 q: "¿Qué sedes están disponibles?",
-                a: "Santiago y Concepción."
+                a: "Santiago y Concepción.",
               },
               {
                 q: "¿Necesito registrarme?",
-                a: "No. El catálogo es público."
+                a: "No. El catálogo es público.",
               },
             ].map((item, idx) => (
               <div className="col-12 col-lg-6" key={idx}>
@@ -103,20 +93,16 @@ export default function Help() {
               </div>
             ))}
           </div>
-
         </div>
       </section>
-
 
       {/* CONTACTO */}
       <section id="contact" className="py-5 help-contact">
         <div className="container-xxl">
           <div className="help-form-card p-4 p-md-5">
-
             <h3 className="mb-4">Formulario de contacto</h3>
 
             <form onSubmit={onSubmit} className="row g-3">
-
               <div className="col-12 col-md-6">
                 <input
                   type="text"
@@ -154,17 +140,14 @@ export default function Help() {
               </div>
 
               <div className="col-12 d-flex justify-content-end">
-                <button type="submit" className="btn help-btn-cta">
+                <button type="submit" className="btn btn-cta">
                   Enviar mensaje
                 </button>
               </div>
-
             </form>
-
           </div>
         </div>
       </section>
-
     </div>
   );
 }

@@ -1,216 +1,178 @@
 /* =========================================
-   1. IMPORTACIÓN DE FUENTE Y RESET
+   1) FUENTE + TOKENS
    ========================================= */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 :root {
-  /* Paleta Cyber Teal Principal */
-  --ds-primary: #0d9488;       /* Electric Teal */
-  --ds-primary-dark: #0f172a;  /* Deep Space (Headers y Áreas de énfasis) */
-  --ds-cta: #2dd4bf;           /* Mint Spark */
+  --ds-primary: #0d9488;
+  --ds-primary-dark: #0f172a;
+  --ds-cta: #2dd4bf;
   --ds-cta-hover: #14b8a6;
-  --ds-indigo: #6366f1;        /* Indigo (Para Certificación Meta) */
-  
-  /* Fondos para eliminar el exceso de blanco */
-  --ds-bg: #f1f5f9;            /* Fondo de página gris/azul suave */
+  --ds-indigo: #6366f1;
+
+  --ds-bg: #f1f5f9;
   --ds-white: #ffffff;
   --ds-border: #cbd5e1;
-  
-  /* Textos */
-  --ds-text-main: #1e293b;     
-  --ds-text-muted: #64748b;    
 
-  /* Propiedades Físicas */
+  --ds-text-main: #1e293b;
+  --ds-text-muted: #64748b;
+
   --ds-radius: 12px;
   --ds-radius-sm: 8px;
+
   --ds-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
-  --ds-font: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --ds-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+  --ds-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
+/* =========================================
+   2) BASE LOOK & FEEL
+   ========================================= */
 body {
   background-color: var(--ds-bg);
   color: var(--ds-text-main);
   font-family: var(--ds-font);
+}
+
+/* =========================================
+   3) UTILITIES
+   ========================================= */
+.ds-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ds-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
+}
+
+/* =========================================
+   4) HEADERS / TOOLBARS
+   ========================================= */
+.courses-toolbar,
+.certs-toolbar,
+.catalog-toolbar {
+  background: var(--ds-primary-dark);
+  color: var(--ds-white);
+  border-radius: var(--ds-radius) var(--ds-radius) 0 0;
+  padding: 24px;
+  border: none;
+}
+
+.courses-title,
+.certs-title,
+.catalog-title {
+  color: var(--ds-cta);
+  font-weight: 800;
   margin: 0;
 }
 
 /* =========================================
-   2. COMPONENTES DE ESTRUCTURA (Headers)
-   ========================================= */
-
-/* Esto quita el "blanco" de las cabeceras y les da un look Pro */
-.courses-toolbar, .certs-toolbar, .catalog-toolbar {
-  background: var(--ds-primary-dark) !important;
-  color: var(--ds-white) !important;
-  border-radius: var(--ds-radius) var(--ds-radius) 0 0 !important;
-  padding: 24px !important;
-  border: none !important;
-}
-
-.courses-title, .certs-title, .catalog-title {
-  color: var(--ds-cta) !important; /* Título brilla en el fondo oscuro */
-  font-weight: 800 !important;
-  margin: 0 !important;
-}
-
-/* =========================================
-   3. BOTONES (Sin Naranjas)
+   5) BUTTONS (BOOTSTRAP OVERRIDES + VARIANTES)
    ========================================= */
 .btn {
   font-family: var(--ds-font);
   border-radius: var(--ds-radius-sm);
   font-weight: 700;
-  transition: all 0.2s ease;
-  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
 }
 
-/* Verde Oscuro Principal */
 .btn-primary {
   background-color: var(--ds-primary) !important;
-  color: white !important;
+  border-color: var(--ds-primary) !important;
+  color: var(--ds-white) !important;
 }
 
-/* Verde Menta (Para "Agregar", "Comprar" o "Ingresar") */
-.btn-cta {
-  background-color: var(--ds-cta) !important;
-  color: var(--ds-primary-dark) !important;
-}
-
-.btn-cta:hover {
-  background-color: var(--ds-cta-hover) !important;
+.btn-primary:hover {
+  background-color: #0f766e !important;
+  border-color: #0f766e !important;
   transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
 }
 
 .btn-outline-secondary {
   border: 1px solid var(--ds-border) !important;
-  background: white !important;
+  background: var(--ds-white) !important;
   color: var(--ds-text-main) !important;
 }
 
-/* =========================================
-   4. MODALES (Encabezado Oscuro + Letras Menta)
-   ========================================= */
-.ds-modal-backdrop {
-  position: fixed !important;
-  inset: 0 !important;
-  background: rgba(15, 23, 42, 0.8) !important; /* Un poco más oscuro para resaltar la modal */
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999 !important;
-  backdrop-filter: blur(4px);
-  padding: 20px;
-}
-
-.ds-modal {
-  background: var(--ds-white);
-  width: 100%;
-  max-width: 700px;
-  border-radius: var(--ds-radius);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  animation: modalSlide 0.3s ease-out;
-  border: none;
-}
-
-@keyframes modalSlide {
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.ds-modal-header {
-  background: var(--ds-primary-dark) !important; /* Fondo Deep Space */
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid var(--ds-primary); /* Línea sutil teal para separar */
-}
-
-/* Forzamos el color Verde Menta en el título */
-.ds-modal-header h1, 
-.ds-modal-header h2, 
-.ds-modal-header h3, 
-.ds-modal-header h4, 
-.ds-modal-header h5, 
-.ds-modal-header .ds-modal-title {
-  color: var(--ds-cta) !important; /* Color Verde Menta */
-  margin: 0;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Estilo para el botón X de cerrar */
-.ds-modal-header .btn-close-white {
-  filter: invert(1) grayscale(1) brightness(2); /* Si usas el de bootstrap */
-}
-
-.ds-modal-body {
-  padding: 24px;
-  background: white;
-  max-height: 80vh;
-  overflow-y: auto;
-  color: var(--ds-text-main);
-}
-
-/* =========================================
-   5. TARJETAS Y TABLAS
-   ========================================= */
-.ds-card {
-  background: var(--ds-white);
-  border-radius: var(--ds-radius);
-  border: 1px solid var(--ds-border);
+.btn-outline-secondary:hover {
+  background: var(--ds-bg) !important;
+  border-color: var(--ds-border) !important;
+  transform: translateY(-2px);
   box-shadow: var(--ds-shadow);
-  padding: 24px;
 }
 
-/* Tablas estilo Dashboard */
-.table {
-  background: white;
-  margin-bottom: 0;
+.btn-cta {
+  background-color: var(--ds-cta) !important;
+  border-color: var(--ds-cta) !important;
+  color: var(--ds-primary-dark) !important;
+  min-width: 120px;
 }
 
-.table thead th {
-  background: #f8fafc;
-  color: var(--ds-text-muted);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 16px;
-  border-bottom: 2px solid var(--ds-bg);
+.btn-cta:hover {
+  background-color: var(--ds-cta-hover) !important;
+  border-color: var(--ds-cta-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
 }
 
-/* --- CLASES PARA EL DIAGRAMA DE CERTIFICACIÓN --- */
-.ds-card-certification {
-  background: var(--ds-indigo);
-  color: white;
-  border-radius: 16px;
-  padding: 30px;
-  text-align: center;
+.btn-cta-alt {
+  background: var(--ds-white) !important;
+  border: 1px solid var(--ds-cta) !important;
+  color: var(--ds-primary-dark) !important;
+  min-width: 120px;
 }
 
-.ds-card-course-core {
-  border: 2px solid var(--ds-primary);
-  background: white;
+.btn-cta-alt:hover {
+  background: rgba(45, 212, 191, 0.08) !important;
+  border-color: var(--ds-cta-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
 }
 
-.ds-card-course-elective {
-  border: 2px dashed var(--ds-border);
-  background: #f8fafc;
+.btn-outline-secondary:focus,
+.btn-primary:focus,
+.btn-cta:focus,
+.btn-cta-alt:focus,
+.ds-btn-primary:focus,
+.ds-btn-secondary:focus {
+  box-shadow: 0 0 0 0.2srem rgba(13, 148, 136, 0.25) !important;
 }
 
-.badge-credits {
-  background: var(--ds-primary-dark);
-  color: var(--ds-cta);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-weight: 800;
+/* =========================================
+   5B) DS BUTTONS (USO DIRECTO EN JSX)
+   ========================================= */
+.ds-btn-primary {
+  background: var(--ds-primary) !important;
+  border-color: var(--ds-primary) !important;
+  color: var(--ds-white) !important;
 }
 
+.ds-btn-primary:hover {
+  background: #0f766e !important;
+  border-color: #0f766e !important;
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
+}
 
+.ds-btn-secondary {
+  background: var(--ds-indigo) !important;
+  border-color: var(--ds-indigo) !important;
+  color: var(--ds-white) !important;
+}
 
+.ds-btn-secondary:hover {
+  opacity: 0.92;
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
+}
 
+/* =========================================
+   6) NAVBAR + DROPDOWN
+   ========================================= */
 .ds-nav {
   background: var(--ds-white);
   border-bottom: 1px solid var(--ds-border);
@@ -249,6 +211,12 @@ body {
   background: transparent;
   border: none;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.ds-navlink:hover {
+  background: rgba(15, 23, 42, 0.04);
+  transform: translateY(-1px);
 }
 
 .ds-navlink.is-active {
@@ -256,17 +224,13 @@ body {
   background: rgba(13, 148, 136, 0.12);
 }
 
-.ds-trigger {
-  background: transparent;
+.ds-dropdown {
+  position: relative;
 }
 
 .ds-caret {
   font-weight: 700;
   margin-left: 2px;
-}
-
-.ds-dropdown {
-  position: relative;
 }
 
 .ds-menu {
@@ -290,6 +254,7 @@ body {
   padding: 10px 12px;
   text-decoration: none;
   color: var(--ds-text-main);
+  transition: background-color 0.2s ease;
 }
 
 .ds-menu-item:hover {
@@ -368,30 +333,69 @@ body {
   background: rgba(180, 35, 24, 0.06);
 }
 
+/* =========================================
+   7) CARDS
+   ========================================= */
+.ds-card {
+  background: var(--ds-white);
+  border-radius: var(--ds-radius);
+  border: 1px solid var(--ds-border);
+  box-shadow: var(--ds-shadow);
+  padding: 24px;
+}
+
 .login-card {
-  max-width: 420px;     /* ancho ideal para login */
+  max-width: 420px;
   width: 100%;
-  margin: 0 auto;       /* centra horizontalmente */
+  margin: 0 auto;
 }
 
-.btn-icon {
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  color: var(--ds-primary-dark)
+.ds-card-certification {
+  background: var(--ds-indigo);
+  color: var(--ds-white);
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
 }
 
-.btn-link.btn-icon {
+.ds-card-course-core {
+  border: 2px solid var(--ds-primary);
+  background: var(--ds-white);
+}
+
+.ds-card-course-elective {
+  border: 2px dashed var(--ds-border);
+  background: #f8fafc;
+}
+
+.badge-credits {
+  background: var(--ds-primary-dark);
+  color: var(--ds-cta);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+}
+
+/* =========================================
+   8) TABLES
+   ========================================= */
+.table {
+  background: var(--ds-white);
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background: #f8fafc;
   color: var(--ds-text-muted);
-}
-
-.btn-link.btn-icon:hover {
-  color: var(--ds-primary);
-  text-decoration: none;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 16px;
+  border-bottom: 2px solid var(--ds-bg);
 }
 
 .ds-table-page .table {
-  font-size: 1rem; /* ~14.4px */
+  font-size: 1rem;
 }
 
 .ds-table-page .table thead th {
@@ -404,59 +408,124 @@ body {
   vertical-align: middle;
 }
 
-.btn-cta {
-  min-width: 120px;   /* ajusta a gusto: 120–160px */
+.ds-req-table {
+  font-size: 0.92rem;
 }
 
-.ds-filter-input {
-  min-width: 280px;   /* base */
+.ds-req-table thead th {
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-weight: 700;
 }
 
-@media (min-width: 768px) {
-  .ds-filter-input {
-    min-width: 340px;
+.ds-req-table tbody td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  vertical-align: middle;
+}
+
+.ds-req-table.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.ds-req-value .ds-req-code {
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.ds-req-value .ds-req-name {
+  font-size: 0.82rem;
+  line-height: 1.2;
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 992px) {
+  .ds-req-value .ds-req-name {
+    white-space: normal;
   }
 }
 
-/* Modal (reutilizable) */
-.ds-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  display: flex;
+/* =========================================
+   9) MODALS
+   ========================================= */
+.ds-modal-overlay,
+.ds-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.65) !important;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   padding: 16px;
-  z-index: 9999;
+  z-index: 9999 !important;
+  backdrop-filter: blur(4px);
 }
 
-.ds-modal-card {
+.ds-modal-card,
+.ds-modal {
   width: 100%;
   max-width: 900px;
   background: var(--ds-white);
   border-radius: var(--ds-radius);
   border: 1px solid var(--ds-border);
-  box-shadow: var(--ds-shadow);
+  box-shadow: var(--ds-shadow-lg);
   overflow: hidden;
+  animation: dsModalSlide 0.25s ease-out;
+}
+
+@keyframes dsModalSlide {
+  from {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .ds-modal-header {
+  background: var(--ds-primary-dark);
+  padding: 16px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 18px;
-  background: var(--ds-primary-dark);
-  color: var(--ds-white);
+  border-bottom: 2px solid var(--ds-primary);
 }
 
 .ds-modal-title {
   margin: 0;
   font-weight: 900;
   letter-spacing: 0.02em;
+  color: var(--ds-cta);
+  text-transform: uppercase;
+}
+
+.ds-modal-header h1,
+.ds-modal-header h2,
+.ds-modal-header h3,
+.ds-modal-header h4,
+.ds-modal-header h5 {
+  margin: 0;
+  color: var(--ds-cta);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .ds-modal-body {
   padding: 18px;
+  background: var(--ds-white);
+  color: var(--ds-text-main);
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .ds-modal-footer {
@@ -468,37 +537,69 @@ body {
   background: var(--ds-white);
 }
 
-/* Icon button (para acciones y cerrar) */
+.ds-modal-xxl {
+  max-width: 1200px;
+  width: min(1200px, calc(100vw - 48px));
+}
+
+.ds-modal.ds-modal-xxl .ds-modal-body {
+  max-height: calc(100vh - 220px);
+  overflow: auto;
+}
+
+/* =========================================
+   10) ICON BUTTONS + ACTIONS
+   ========================================= */
 .btn-icon {
   width: 34px;
   height: 34px;
   padding: 0;
 }
 
-/* Botón sin borde para acciones en tabla */
+.btn-link.btn-icon {
+  color: var(--ds-primary-dark) !important;
+  text-decoration: none !important;
+}
+
+.btn-link.btn-icon:hover {
+  color: var(--ds-cta) !important;
+  text-decoration: none !important;
+}
+
+.btn-link.btn-icon.text-danger:hover {
+  color: #b42318 !important;
+}
+
 .btn-ghost {
   background: transparent;
   border: none;
   color: var(--ds-text-muted);
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .btn-ghost:hover {
   color: var(--ds-primary);
+  transform: translateY(-1px);
 }
 
-/* Tabla requerimientos más compacta */
-.ds-req-table {
-  font-size: 0.92rem;
+/* =========================================
+   11) FORMS
+   ========================================= */
+.ds-input,
+.ds-select {
+  border-radius: var(--ds-radius-sm);
 }
 
-.ds-req-table thead th {
-  font-size: 0.78rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--ds-text-muted);
+.ds-filter-input {
+  min-width: 280px;
 }
 
-/* Info general como “card” dentro de la modal */
+@media (min-width: 768px) {
+  .ds-filter-input {
+    min-width: 340px;
+  }
+}
+
 .ds-info-card {
   background: var(--ds-white);
   border: 1px solid var(--ds-border);
@@ -520,154 +621,17 @@ body {
   color: var(--ds-text-main);
 }
 
-/* Inputs con look consistente (si no los tienes ya) */
-.ds-input,
-.ds-select {
-  border-radius: var(--ds-radius-sm);
-}
-
-/* Botón “Agregar requerimiento” con space-between */
 .ds-btn-sb {
   min-width: 220px;
 }
 
-/* =========================================
-   HOVERS (consistentes en todo el sistema)
-   ========================================= */
-
-/* Cancelar / Outline */
-.btn-outline-secondary:hover {
-  background: var(--ds-bg) !important;
-  border-color: var(--ds-border) !important;
-  transform: translateY(-2px);
-}
-
-/* Primario (Guardar cambios) */
-.btn-primary:hover {
-  background-color: #0f766e !important; /* tono un poco más oscuro que --ds-primary */
-  transform: translateY(-2px);
-}
-
-/* (Opcional) Para que se sienta clickeable también al foco */
-.btn-outline-secondary:focus,
-.btn-primary:focus,
-.btn-cta:focus {
-  box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.25) !important;
-}
-
-/* =========================================
-   ICONOS DE ACCIÓN (Editar / Eliminar)
-   ========================================= */
-
-/* Base: ambos íconos en color oscuro */
-.btn-icon {
-  color: var(--ds-primary-dark);
-}
-
-/* EDITAR: hover verde menta (ya alineado al sistema) */
-.btn-icon:hover {
-  color: var(--ds-cta);
-}
-
-/* ELIMINAR: estado normal oscuro */
-.btn-icon.text-danger {
-  color: var(--ds-primary-dark) !important;
-}
-
-/* ELIMINAR: hover rojo */
-.btn-icon.text-danger:hover {
-  color: #b42318 !important; /* rojo peligro consistente */
-}
-
-/* =========================================
-   ICONOS DE ACCIÓN – COLOR BASE UNIFICADO
-   ========================================= */
-
-/* Estado base: TODOS los iconos iguales */
-.btn-link.btn-icon {
-  color: var(--ds-primary-dark) !important;
-}
-
-/* EDITAR: hover verde menta */
-.btn-link.btn-icon:hover {
-  color: var(--ds-cta) !important;
-}
-
-/* ELIMINAR: hover rojo */
-.btn-link.btn-icon.text-danger:hover {
-  color: #b42318 !important;
-}
-
-/* =========================================
-   MODAL XXL (para CertificationDetail)
-   ========================================= */
-.ds-modal-xxl {
-  max-width: 1200px; /* ajustable */
-  width: min(1200px, calc(100vw - 48px));
-}
-
-/* Si tu modal tiene scroll interno, esto ayuda a no “crecer” infinito */
-.ds-modal.ds-modal-xxl .ds-modal-body {
-  max-height: calc(100vh - 220px);
-  overflow: auto;
-}
-
-/* =========================================
-   REQUIREMENTS TABLE – más compacta
-   ========================================= */
-.ds-req-table {
-  font-size: 0.92rem;
-}
-
-.ds-req-table thead th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-
-.ds-req-table tbody td {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  vertical-align: middle;
-}
-
-/* Opcional: reduce un poco el alto de filas al hover */
-.ds-req-table.table-hover tbody tr:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-}
-
-/* Valor tipo COURSE: 2 líneas ordenadas */
-.ds-req-value .ds-req-code {
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-.ds-req-value .ds-req-name {
-  font-size: 0.82rem;
-  line-height: 1.2;
-  max-width: 420px;       /* evita que se expanda infinito */
-  white-space: nowrap;    /* 1 línea */
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* En pantallas más chicas, permite 2 líneas (mejor legibilidad) */
-@media (max-width: 992px) {
-  .ds-req-value .ds-req-name {
-    white-space: normal;
-  }
-}
-
-/* =========================================
-   Link discreto “Agregar requerimiento” (Opción B)
-   ========================================= */
 .ds-add-link {
   padding: 6px 10px;
   border-radius: 8px;
   text-decoration: none;
   color: var(--ds-primary-dark) !important;
   font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .ds-add-link:hover {
@@ -676,24 +640,8 @@ body {
 }
 
 /* =========================================
-   ICONOS DE ACCIÓN – base unificada + hover
-   (si ya lo agregaste antes, déjalo solo una vez)
+   12) FOOTER
    ========================================= */
-.btn-link.btn-icon {
-  color: var(--ds-primary-dark) !important;
-}
-
-.btn-link.btn-icon:hover {
-  color: var(--ds-cta) !important;
-}
-
-/* Eliminar: hover rojo */
-.btn-link.btn-icon.text-danger:hover {
-  color: #b42318 !important;
-}
-
-/* Agregar al CSS global (usa variables del Design System) */
-
 .ds-footer {
   background: var(--ds-primary-dark);
   color: var(--ds-white);
@@ -759,7 +707,6 @@ body {
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* Responsive: apila y centra en pantallas pequeñas */
 @media (max-width: 640px) {
   .ds-footer-top {
     justify-content: center;
@@ -774,339 +721,4 @@ body {
     flex-basis: 100%;
     text-align: center;
   }
-}
-
-
-/* ===== HELP PAGE ===== */
-
-.help-hero {
-  background:
-    radial-gradient(900px 500px at 80% 10%, rgba(0,204,153,0.15), transparent 60%),
-    radial-gradient(900px 500px at 10% 10%, rgba(0,102,153,0.15), transparent 60%),
-    linear-gradient(180deg, rgba(0,102,153,0.05), #ffffff);
-}
-
-.help-kicker {
-  color: #006699;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.help-title {
-  font-weight: 900;
-  font-size: clamp(2rem, 3vw, 2.8rem);
-  color: #333333;
-}
-
-.help-lead {
-  font-size: 1.1rem;
-  color: #333333;
-  opacity: 0.9;
-}
-
-.help-side-card {
-  border-radius: 8px;
-}
-
-.help-side-list {
-  padding-left: 18px;
-  margin-bottom: 0;
-}
-
-.help-side-list li {
-  margin-bottom: 8px;
-}
-
-
-.help-section-title {
-  font-weight: 900;
-  font-size: 1.8rem;
-  color: #333333;
-}
-
-.help-section-subtitle {
-  color: #333333;
-  opacity: 0.75;
-}
-
-.help-faq-card {
-  border-radius: 8px;
-}
-
-.help-contact {
-  background: rgba(0,102,153,0.03);
-}
-
-.help-input {
-  border-radius: 8px;
-}
-
-
-
-/* ===== HELP PAGE CYBER TEAL ===== */
-
-.help-page {
-  background: var(--ds-bg);
-  font-family: var(--ds-font);
-}
-
-/* HERO */
-
-.help-hero {
-  background:
-    radial-gradient(800px 400px at 80% 0%, rgba(45,212,191,0.15), transparent 60%),
-    linear-gradient(180deg, rgba(13,148,136,0.05), var(--ds-bg));
-}
-
-.help-kicker {
-  color: var(--ds-primary);
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.help-title {
-  font-weight: 900;
-  font-size: clamp(2rem, 3vw, 2.8rem);
-  color: var(--ds-text-main);
-}
-
-.help-lead {
-  color: var(--ds-text-muted);
-  font-size: 1.1rem;
-}
-
-/* BOTONES */
-
-.help-btn-primary {
-  background: var(--ds-primary);
-  color: white;
-  border-radius: var(--ds-radius-sm);
-  border: none;
-}
-
-.help-btn-primary:hover {
-  background: var(--ds-primary-dark);
-  color: white;
-}
-
-.help-btn-secondary {
-  background: var(--ds-indigo);
-  color: white;
-  border-radius: var(--ds-radius-sm);
-  border: none;
-}
-
-.help-btn-secondary:hover {
-  opacity: 0.9;
-}
-
-.help-btn-cta {
-  background: var(--ds-cta);
-  color: var(--ds-primary-dark);
-  font-weight: 800;
-  border-radius: var(--ds-radius-sm);
-  border: none;
-}
-
-.help-btn-cta:hover {
-  background: var(--ds-cta-hover);
-  color: var(--ds-primary-dark);
-}
-
-/* CARDS */
-
-.help-side-card,
-.help-faq-card,
-.help-form-card {
-  background: var(--ds-white);
-  border-radius: var(--ds-radius);
-  box-shadow: var(--ds-shadow);
-  border: 1px solid var(--ds-border);
-}
-
-.help-side-list {
-  padding-left: 18px;
-}
-
-.help-section-title {
-  font-weight: 900;
-  color: var(--ds-text-main);
-}
-
-.help-section-subtitle {
-  color: var(--ds-text-muted);
-}
-
-/* CONTACTO */
-
-.help-contact {
-  background: rgba(15,23,42,0.03);
-}
-
-.help-input {
-  border-radius: var(--ds-radius-sm);
-  border: 1px solid var(--ds-border);
-}
-
-
-/* ===========================
-   HOME (Cyber Teal palette)
-   Reemplaza el <style> inline
-   =========================== */
-
-.home-hero{
-  background:
-    radial-gradient(900px 500px at 80% 15%, rgba(45,212,191,0.18), transparent 60%),
-    radial-gradient(900px 500px at 10% 10%, rgba(13,148,136,0.18), transparent 60%),
-    linear-gradient(180deg, rgba(15,23,42,0.06), var(--ds-white));
-}
-
-.home-kicker{
-  color: var(--ds-primary);
-  font-weight: 800;
-  letter-spacing: .8px;
-  text-transform: uppercase;
-  opacity: .95;
-}
-
-.home-title{
-  color: var(--ds-text-main);
-  font-weight: 900;
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  line-height: 1.05;
-}
-
-.home-lead{
-  color: var(--ds-text-muted);
-}
-
-.home-badges{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.home-badge{
-  display:inline-flex;
-  gap:8px;
-  align-items:center;
-  padding:10px 12px;
-  border-radius: 999px;
-  background: rgba(15,23,42,0.04);
-  border: 1px solid var(--ds-border);
-  color: var(--ds-text-main);
-  font-weight: 700;
-}
-
-.home-hero-card{
-  border-radius: var(--ds-radius);
-}
-
-.home-card-title{
-  font-weight: 900;
-  color: var(--ds-text-main);
-}
-
-.home-card-icon{
-  color: var(--ds-cta);
-  font-size: 1.4rem;
-}
-
-.home-steps{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.home-step{
-  display:flex;
-  gap:14px;
-  align-items:flex-start;
-}
-
-.home-step-dot{
-  width:32px;
-  height:32px;
-  border-radius: var(--ds-radius-sm);
-  background: rgba(45,212,191,0.22);
-  display:grid;
-  place-items:center;
-  font-weight: 900;
-  color: var(--ds-primary-dark);
-  flex:0 0 auto;
-}
-
-.home-step-title{
-  font-weight: 800;
-  color: var(--ds-text-main);
-}
-
-.home-step-text{
-  color: var(--ds-text-muted);
-}
-
-/* OJO: tu botón ya usa btn-cta, así que NO definimos .home-cta
-   para que no vuelva el naranjo por accidente */
-
-.home-section-title{
-  font-weight: 900;
-  color: var(--ds-text-main);
-  font-size: clamp(1.6rem, 2.2vw, 2rem);
-}
-
-.home-section-subtitle{
-  color: var(--ds-text-muted);
-}
-
-.home-product-card{
-  border-radius: var(--ds-radius);
-}
-
-.home-pill{
-  display:inline-flex;
-  padding:8px 12px;
-  border-radius: 999px;
-  background: rgba(99,102,241,0.12);
-  color: var(--ds-indigo);
-  font-weight: 800;
-  font-size: .85rem;
-}
-
-.home-award{
-  color: var(--ds-primary);
-  font-size: 1.8rem;
-}
-
-.home-card-desc{
-  color: var(--ds-text-muted);
-}
-
-.home-note{
-  color: var(--ds-text-muted);
-  font-size: .9rem;
-}
-
-.home-value{
-  background: rgba(15,23,42,0.03);
-}
-
-.home-icon{
-  color: var(--ds-primary);
-  font-size: 1.6rem;
-}
-
-.home-muted{
-  color: var(--ds-text-muted);
-}
-
-.home-final-cta{
-  border-radius: var(--ds-radius);
-}
-
-.home-final-title{
-  font-weight: 900;
-  color: var(--ds-text-main);
-  font-size: 1.25rem;
 }

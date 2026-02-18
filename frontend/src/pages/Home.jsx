@@ -23,7 +23,8 @@ export default function Home() {
 
               <p className="home-lead mb-4">
                 CERTIFY te permite explorar certificaciones que agrupan cursos y
-                requisitos, con una experiencia moderna, transparente y lista para decidir rápido.
+                requisitos, con una experiencia moderna, transparente y lista
+                para decidir rápido.
               </p>
 
               <div className="home-badges mt-4">
@@ -52,6 +53,7 @@ export default function Home() {
                   <i className="bi bi-stars home-card-icon"></i>
                 </div>
 
+                <div className="home-steps">
                   <div className="home-step">
                     <div className="home-step-dot">1</div>
                     <div>
@@ -61,7 +63,7 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                <div className="home-steps">
+
                   <div className="home-step">
                     <div className="home-step-dot">2</div>
                     <div>
@@ -81,18 +83,16 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-
                 </div>
 
                 <div className="mt-4">
-<Link
-  to="/catalog"
-  className="btn btn-cta d-inline-flex align-items-center gap-2 px-4"
->
-  Ver certificaciones
-  <i className="bi bi-arrow-right"></i>
-</Link>
-
+                  <Link
+                    to="/catalog"
+                    className="btn btn-cta d-inline-flex align-items-center gap-2 px-4"
+                  >
+                    Ver certificaciones
+                    <i className="bi bi-arrow-right"></i>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -116,7 +116,6 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* cards (placeholder visual; luego lo conectamos al catálogo si quieres) */}
           <div className="row g-4">
             {[
               {
@@ -146,7 +145,6 @@ export default function Home() {
                   </div>
 
                   <p className="home-card-desc mt-2 mb-4">{item.desc}</p>
-
                 </div>
               </div>
             ))}
@@ -197,7 +195,8 @@ export default function Home() {
                   ¿Listo para elegir tu próxima certificación?
                 </div>
                 <div className="home-muted">
-                  Revisa el catálogo, entra al detalle y decide con información completa.
+                  Revisa el catálogo, entra al detalle y decide con información
+                  completa.
                 </div>
               </div>
 
@@ -211,7 +210,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
     </div>

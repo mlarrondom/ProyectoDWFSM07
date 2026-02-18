@@ -1,0 +1,223 @@
+/* =========================================
+   HELP PAGE
+   ========================================= */
+.help-page {
+  background: var(--ds-bg);
+  font-family: var(--ds-font);
+}
+
+.help-hero {
+  background:
+    radial-gradient(800px 400px at 80% 0%, rgba(45, 212, 191, 0.15), transparent 60%),
+    linear-gradient(180deg, rgba(13, 148, 136, 0.05), var(--ds-bg));
+}
+
+.help-kicker {
+  color: var(--ds-primary);
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.help-title {
+  font-weight: 900;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  color: var(--ds-text-main);
+}
+
+.help-lead {
+  color: var(--ds-text-muted);
+  font-size: 1.1rem;
+}
+
+.help-side-card,
+.help-faq-card,
+.help-form-card {
+  background: var(--ds-white);
+  border-radius: var(--ds-radius);
+  box-shadow: var(--ds-shadow);
+  border: 1px solid var(--ds-border);
+}
+
+.help-side-list {
+  padding-left: 18px;
+  margin-bottom: 0;
+}
+
+.help-side-list li {
+  margin-bottom: 8px;
+}
+
+.help-section-title {
+  font-weight: 900;
+  color: var(--ds-text-main);
+  font-size: 1.8rem;
+}
+
+.help-section-subtitle {
+  color: var(--ds-text-muted);
+}
+
+.help-contact {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+.help-input {
+  border-radius: var(--ds-radius-sm);
+  border: 1px solid var(--ds-border);
+}
+
+/* =========================================
+   HOME PAGE
+   ========================================= */
+.home-hero {
+  background:
+    radial-gradient(900px 500px at 80% 15%, rgba(45, 212, 191, 0.18), transparent 60%),
+    radial-gradient(900px 500px at 10% 10%, rgba(13, 148, 136, 0.18), transparent 60%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.06), var(--ds-white));
+}
+
+.home-kicker {
+  color: var(--ds-primary);
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  opacity: 0.95;
+}
+
+.home-title {
+  color: var(--ds-text-main);
+  font-weight: 900;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.home-lead {
+  color: var(--ds-text-muted);
+}
+
+.home-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.home-badge {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--ds-border);
+  color: var(--ds-text-main);
+  font-weight: 700;
+}
+
+.home-hero-card {
+  border-radius: var(--ds-radius);
+}
+
+.home-card-title {
+  font-weight: 900;
+  color: var(--ds-text-main);
+}
+
+.home-card-icon {
+  color: var(--ds-cta);
+  font-size: 1.4rem;
+}
+
+.home-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.home-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.home-step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ds-radius-sm);
+  background: rgba(45, 212, 191, 0.22);
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  color: var(--ds-primary-dark);
+  flex: 0 0 auto;
+}
+
+.home-step-title {
+  font-weight: 800;
+  color: var(--ds-text-main);
+}
+
+.home-step-text {
+  color: var(--ds-text-muted);
+}
+
+.home-section-title {
+  font-weight: 900;
+  color: var(--ds-text-main);
+  font-size: clamp(1.6rem, 2.2vw, 2rem);
+}
+
+.home-section-subtitle {
+  color: var(--ds-text-muted);
+}
+
+.home-product-card {
+  border-radius: var(--ds-radius);
+}
+
+.home-pill {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--ds-indigo);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.home-award {
+  color: var(--ds-primary);
+  font-size: 1.8rem;
+}
+
+.home-card-desc {
+  color: var(--ds-text-muted);
+}
+
+.home-note {
+  color: var(--ds-text-muted);
+  font-size: 0.9rem;
+}
+
+.home-value {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+.home-icon {
+  color: var(--ds-primary);
+  font-size: 1.6rem;
+}
+
+.home-muted {
+  color: var(--ds-text-muted);
+}
+
+.home-final-cta {
+  border-radius: var(--ds-radius);
+}
+
+.home-final-title {
+  font-weight: 900;
+  color: var(--ds-text-main);
+  font-size: 1.25rem;
+}
