@@ -172,16 +172,13 @@ export default function Catalog() {
   return (
     <div className="container py-3">
       {/* Header + filtro binario */}
-      <div className="ds-card catalog-toolbar">
+      <div className="catalog-toolbar">
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-2">
           <div>
             <h2 className="m-0 catalog-title">Catálogo de Certificaciones</h2>
-            <div className="text-muted catalog-subtitle">
-              Selecciona sede para ver la oferta disponible.
-            </div>
           </div>
 
-          <div className="btn-group" role="group" aria-label="Filtro por sede">
+          <div className="btn-group ds-campus-toggle" role="group" aria-label="Filtro por sede">
             <button
               type="button"
               className={`btn ${
@@ -289,8 +286,8 @@ export default function Catalog() {
                               </button>
 
 <button
-  className="btn btn-primary"
   type="button"
+  className="btn btn-cta d-inline-flex align-items-center gap-2"
   onClick={() =>
     addItem({
       certCode: cert.certCode,
@@ -301,8 +298,9 @@ export default function Catalog() {
     })
   }
 >
-  Agregar al carrito
+  Agregar <i className="bi bi-cart-plus"></i>
 </button>
+
 
                             </div>
                           </div>

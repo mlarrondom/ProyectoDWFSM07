@@ -1,217 +1,130 @@
 const Certification = require("../models/Certification");
-const { CAMPUSES, OWNER_UNITS } = require("../models/Certification");
-const Requirement = require("../models/Requirement");
 
-// Helper: parse/validate price
-const parsePrice = (price) => {
-  if (price === undefined) return undefined; // no viene -> no tocar
-  const parsed = Number(price);
-  if (!Number.isFinite(parsed) || parsed < 0) return null;
-  return parsed;
-};
-
-// GET /api/certifications
-const getAllCertifications = async (req, res) => {
+// =============================
+// GET ALL
+// =============================
+exports.getAllCertifications = async (req, res) => {
   try {
-    const filter = req.allowedCampus ? { campus: req.allowedCampus } : {};
-
-    const certifications = await Certification.find(filter)
-      .sort({ certCode: 1 })
-      .select("certCode name campus ownerUnit price createdBy"); // ✅ incluye price
-
-    res.json({ certifications });
-  } catch (error) {
-    res.status(500).json({ msg: "Error al obtener certificaciones" });
+    const certifications = await Certification.find().sort({ certCode: 1 });
+    return res.json({ certifications });
+  } catch (err) {
+    return res.status(500).json({ msg: "Error al listar certificaciones" });
   }
 };
 
-// GET /api/certifications/:certCode
-const getCertificationByCertCode = async (req, res) => {
+// =============================
+// GET BY CODE
+// =============================
+exports.getCertificationByCertCode = async (req, res) => {
   try {
-    const certCode = Number(req.params.certCode);
+    const certCodeNum = Number(req.params.certCode);
 
-    const certification = await Certification.findOne({ certCode });
+    const certification = await Certification.findOne({
+      certCode: certCodeNum,
+    });
 
     if (!certification) {
       return res.status(404).json({ msg: "Certificación no encontrada" });
     }
 
-    if (req.allowedCampus && certification.campus !== req.allowedCampus) {
-      return res.status(403).json({ msg: "No autorizado para esta certificación" });
-    }
-
-    res.json({ certification });
-  } catch (error) {
-    res.status(400).json({ msg: "Código de certificación inválido" });
+    return res.json({ certification });
+  } catch (err) {
+    return res.status(500).json({ msg: "Error al obtener certificación" });
   }
 };
 
-// POST /api/certifications
-const createCertification = async (req, res) => {
+// =============================
+// CREATE
+// =============================
+exports.createCertification = async (req, res) => {
   try {
-    const { certCode, name, ownerUnit, price } = req.body;
+    const { certCode, name, campus, ownerUnit, price } = req.body;
 
-    if (!certCode || !name || !ownerUnit) {
-      return res.status(400).json({
-        msg: "Faltan campos obligatorios (certCode, name, ownerUnit)",
-      });
+    const certCodeNum = Number(certCode);
+    const priceNum = price === "" || price === undefined ? 0 : Number(price);
+
+    if (!Number.isFinite(certCodeNum) || certCodeNum <= 0) {
+      return res.status(400).json({ msg: "certCode inválido" });
     }
 
-    if (!OWNER_UNITS.includes(ownerUnit)) {
-      return res.status(400).json({
-        msg: `ownerUnit inválido. Valores permitidos: ${OWNER_UNITS.join(" | ")}`,
-      });
+    if (!name || !ownerUnit) {
+      return res.status(400).json({ msg: "Completa Código, Nombre y Unidad." });
     }
 
-    const exists = await Certification.findOne({ certCode });
-    if (exists) {
-      return res.status(409).json({ msg: "certCode ya existe" });
+    if (!Number.isFinite(priceNum) || priceNum < 0) {
+      return res.status(400).json({ msg: "Precio inválido (>= 0)." });
     }
 
-    // campus controlado por rol
-    const campus = req.allowedCampus || req.body.campus;
-
-    if (!campus || !CAMPUSES.includes(campus)) {
-      return res.status(400).json({
-        msg: `campus inválido. Valores permitidos: ${CAMPUSES.join(" | ")}`,
-      });
-    }
-
-    // ✅ price opcional
-    const parsedPrice = parsePrice(price);
-    if (parsedPrice === null) {
-      return res.status(400).json({ msg: "price inválido (debe ser número >= 0)" });
-    }
-
-    const certification = await Certification.create({
-      certCode,
-      name,
+    const created = await Certification.create({
+      certCode: certCodeNum,
+      name: String(name).trim(),
       campus,
       ownerUnit,
-      price: parsedPrice !== undefined ? parsedPrice : 0,
-      createdBy: req.user?.id, // ✅ no revienta si algún día lo llamas sin auth
+      price: priceNum,
+      createdBy: req.user?._id,
     });
 
-    return res.status(201).json({ certification });
-  } catch (error) {
+    return res.status(201).json({ certification: created });
+  } catch (err) {
     return res.status(500).json({ msg: "Error al crear certificación" });
   }
 };
 
-// PUT /api/certifications/:certCode
-const updateCertification = async (req, res) => {
+// =============================
+// UPDATE
+// =============================
+exports.updateCertification = async (req, res) => {
   try {
-    const certCode = Number(req.params.certCode);
+    const certCodeNum = Number(req.params.certCode);
     const { name, campus, ownerUnit, price } = req.body;
 
-    if (
-      name === undefined &&
-      campus === undefined &&
-      ownerUnit === undefined &&
-      price === undefined
-    ) {
-      return res.status(400).json({
-        msg: "Debes enviar al menos un campo a actualizar: name, campus, ownerUnit o price",
-      });
+    const updates = {};
+
+    if (name !== undefined) updates.name = String(name).trim();
+    if (ownerUnit !== undefined) updates.ownerUnit = ownerUnit;
+    if (campus !== undefined) updates.campus = campus;
+
+    if (price !== undefined) {
+      const priceNum = price === "" ? 0 : Number(price);
+      if (!Number.isFinite(priceNum) || priceNum < 0) {
+        return res.status(400).json({ msg: "Precio inválido (>= 0)." });
+      }
+      updates.price = priceNum;
     }
 
-    const certification = await Certification.findOne({ certCode });
-    if (!certification) {
+    const updated = await Certification.findOneAndUpdate(
+      { certCode: certCodeNum },
+      { $set: updates },
+      { new: true }
+    );
+
+    if (!updated) {
       return res.status(404).json({ msg: "Certificación no encontrada" });
     }
 
-    if (req.allowedCampus && certification.campus !== req.allowedCampus) {
-      return res.status(403).json({ msg: "No autorizado para esta certificación" });
-    }
-
-    // campus solo lo puede cambiar admin
-    if (campus !== undefined) {
-      if (req.allowedCampus) {
-        return res.status(403).json({
-          msg: "No autorizado para modificar campus",
-        });
-      }
-
-      if (!CAMPUSES.includes(campus)) {
-        return res.status(400).json({
-          msg: `campus inválido. Valores permitidos: ${CAMPUSES.join(" | ")}`,
-        });
-      }
-
-      certification.campus = campus;
-    }
-
-    if (ownerUnit !== undefined) {
-      if (!OWNER_UNITS.includes(ownerUnit)) {
-        return res.status(400).json({
-          msg: `ownerUnit inválido. Valores permitidos: ${OWNER_UNITS.join(" | ")}`,
-        });
-      }
-
-      certification.ownerUnit = ownerUnit;
-    }
-
-    if (name !== undefined) {
-      certification.name = String(name).trim();
-    }
-
-    // ✅ price actualizable
-    if (price !== undefined) {
-      const parsedPrice = parsePrice(price);
-      if (parsedPrice === null) {
-        return res.status(400).json({ msg: "price inválido (debe ser número >= 0)" });
-      }
-      certification.price = parsedPrice;
-    }
-
-    await certification.save();
-
-    return res.json({ msg: "Certificación actualizada OK", certification });
-  } catch (error) {
+    return res.json({ certification: updated });
+  } catch (err) {
     return res.status(500).json({ msg: "Error al actualizar certificación" });
   }
 };
 
-// DELETE /api/certifications/:certCode
-const deleteCertification = async (req, res) => {
+// =============================
+// DELETE
+// =============================
+exports.deleteCertification = async (req, res) => {
   try {
-    const certCode = Number(req.params.certCode);
+    const certCodeNum = Number(req.params.certCode);
 
-    const certification = await Certification.findOne({ certCode });
-    if (!certification) {
+    const deleted = await Certification.findOneAndDelete({
+      certCode: certCodeNum,
+    });
+
+    if (!deleted) {
       return res.status(404).json({ msg: "Certificación no encontrada" });
     }
 
-    if (req.allowedCampus && certification.campus !== req.allowedCampus) {
-      return res.status(403).json({ msg: "No autorizado para esta certificación" });
-    }
-
-    const requirementsCount = await Requirement.countDocuments({
-      certificationId: certification._id,
-    });
-
-    if (requirementsCount > 0) {
-      return res.status(409).json({
-        msg: "No se puede eliminar la certificación porque tiene requisitos asociados",
-      });
-    }
-
-    await Certification.deleteOne({ _id: certification._id });
-
-    return res.json({
-      msg: "Certificación eliminada correctamente",
-      certCode,
-    });
-  } catch (error) {
-    console.error("deleteCertification ERROR:", error);
+    return res.json({ msg: "Certificación eliminada" });
+  } catch (err) {
     return res.status(500).json({ msg: "Error al eliminar certificación" });
   }
-};
-
-module.exports = {
-  getAllCertifications,
-  getCertificationByCertCode,
-  createCertification,
-  updateCertification,
-  deleteCertification,
 };

@@ -54,13 +54,15 @@ export default function CartPage() {
                       <td className="text-center">{it.quantity ?? 1}</td>
                       <td className="text-end">{formatCLP((Number(it.price) || 0) * (it.quantity ?? 1))}</td>
                       <td className="text-center">
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => removeItem(it.certCode)}
-                        >
-                          Eliminar
-                        </button>
+<button
+  type="button"
+  className="btn btn-link btn-ghost d-inline-flex align-items-center justify-content-center btn-icon text-danger"
+  onClick={() => removeItem(it.certCode)}
+  title={`Eliminar ${it.name} del carrito`}
+>
+  <i className="bi bi-trash3"></i>
+</button>
+
                       </td>
                     </tr>
                   ))}
@@ -78,9 +80,10 @@ export default function CartPage() {
 
               <div className="text-muted small mt-2">Próximo paso: Checkout (lo implementamos en el siguiente paso).</div>
 
-              <button type="button" className="btn btn-primary w-100 mt-3" disabled>
-                Pagar
-              </button>
+<Link to="/checkout" className={`btn btn-primary w-100 mt-3 ${items.length === 0 ? "disabled" : ""}`}>
+  Pagar
+</Link>
+
             </div>
           </div>
         </>

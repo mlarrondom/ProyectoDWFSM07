@@ -8,7 +8,6 @@
   --ds-primary-dark: #0f172a;
   --ds-cta: #2dd4bf;
   --ds-cta-hover: #14b8a6;
-  --ds-indigo: #6366f1;
 
   --ds-bg: #f1f5f9;
   --ds-white: #ffffff;
@@ -36,7 +35,20 @@ body {
 }
 
 /* =========================================
-   3) UTILITIES
+   3) LAYOUT
+   ========================================= */
+.ds-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-content {
+  flex: 1;
+}
+
+/* =========================================
+   4) UTILITIES
    ========================================= */
 .ds-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -48,14 +60,14 @@ body {
 }
 
 /* =========================================
-   4) HEADERS / TOOLBARS
+   5) HEADERS / TOOLBARS
    ========================================= */
 .courses-toolbar,
 .certs-toolbar,
 .catalog-toolbar {
   background: var(--ds-primary-dark);
   color: var(--ds-white);
-  border-radius: var(--ds-radius) var(--ds-radius) 0 0;
+  border-radius: var(--ds-radius);
   padding: 24px;
   border: none;
 }
@@ -64,12 +76,40 @@ body {
 .certs-title,
 .catalog-title {
   color: var(--ds-cta);
-  font-weight: 800;
+  font-weight: 900;
   margin: 0;
 }
 
+.ds-toolbar {
+  background: var(--ds-primary-dark);
+  color: var(--ds-white);
+  border-radius: var(--ds-radius);
+  padding: 24px;
+  border: none;
+}
+
+.ds-toolbar-title {
+  color: var(--ds-cta);
+  font-weight: 900;
+  margin: 0;
+}
+
+/* Inputs sobre toolbar oscura */
+.certs-toolbar .form-control,
+.courses-toolbar .form-control,
+.catalog-toolbar .form-control {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.certs-toolbar .form-control:focus,
+.courses-toolbar .form-control:focus,
+.catalog-toolbar .form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(45, 212, 191, 0.25) !important;
+  border-color: rgba(45, 212, 191, 0.55);
+}
+
 /* =========================================
-   5) BUTTONS (BOOTSTRAP OVERRIDES + VARIANTES)
+   6) BUTTONS (BOOTSTRAP OVERRIDES + VARIANTES)
    ========================================= */
 .btn {
   font-family: var(--ds-font);
@@ -79,32 +119,23 @@ body {
     border-color 0.2s ease;
 }
 
-.btn-primary {
-  background-color: var(--ds-primary) !important;
-  border-color: var(--ds-primary) !important;
+/* PRIMARY = AZUL OSCURO */
+.btn-primary,
+.ds-btn-primary {
+  background-color: var(--ds-primary-dark) !important;
+  border-color: var(--ds-primary-dark) !important;
   color: var(--ds-white) !important;
 }
 
-.btn-primary:hover {
-  background-color: #0f766e !important;
-  border-color: #0f766e !important;
+.btn-primary:hover,
+.ds-btn-primary:hover {
+  background-color: #0b1220 !important;
+  border-color: #0b1220 !important;
   transform: translateY(-2px);
   box-shadow: var(--ds-shadow);
 }
 
-.btn-outline-secondary {
-  border: 1px solid var(--ds-border) !important;
-  background: var(--ds-white) !important;
-  color: var(--ds-text-main) !important;
-}
-
-.btn-outline-secondary:hover {
-  background: var(--ds-bg) !important;
-  border-color: var(--ds-border) !important;
-  transform: translateY(-2px);
-  box-shadow: var(--ds-shadow);
-}
-
+/* CTA = VERDE */
 .btn-cta {
   background-color: var(--ds-cta) !important;
   border-color: var(--ds-cta) !important;
@@ -119,6 +150,34 @@ body {
   box-shadow: var(--ds-shadow);
 }
 
+/* SECONDARY = BLANCO con borde oscuro */
+.ds-btn-secondary {
+  background: var(--ds-white) !important;
+  border: 1px solid var(--ds-primary-dark) !important;
+  color: var(--ds-primary-dark) !important;
+}
+
+.ds-btn-secondary:hover {
+  background: rgba(15, 23, 42, 0.04) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
+}
+
+/* OUTLINE (bootstrap) */
+.btn-outline-secondary {
+  border: 1px solid var(--ds-border) !important;
+  background: var(--ds-white) !important;
+  color: var(--ds-text-main) !important;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--ds-bg) !important;
+  border-color: var(--ds-border) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
+}
+
+/* CTA ALT (carrito blanco, si lo necesitas) */
 .btn-cta-alt {
   background: var(--ds-white) !important;
   border: 1px solid var(--ds-cta) !important;
@@ -139,39 +198,11 @@ body {
 .btn-cta-alt:focus,
 .ds-btn-primary:focus,
 .ds-btn-secondary:focus {
-  box-shadow: 0 0 0 0.2srem rgba(13, 148, 136, 0.25) !important;
+  box-shadow: 0 0 0 0.2rem rgba(45, 212, 191, 0.25) !important;
 }
 
 /* =========================================
-   5B) DS BUTTONS (USO DIRECTO EN JSX)
-   ========================================= */
-.ds-btn-primary {
-  background: var(--ds-primary) !important;
-  border-color: var(--ds-primary) !important;
-  color: var(--ds-white) !important;
-}
-
-.ds-btn-primary:hover {
-  background: #0f766e !important;
-  border-color: #0f766e !important;
-  transform: translateY(-2px);
-  box-shadow: var(--ds-shadow);
-}
-
-.ds-btn-secondary {
-  background: var(--ds-indigo) !important;
-  border-color: var(--ds-indigo) !important;
-  color: var(--ds-white) !important;
-}
-
-.ds-btn-secondary:hover {
-  opacity: 0.92;
-  transform: translateY(-2px);
-  box-shadow: var(--ds-shadow);
-}
-
-/* =========================================
-   6) NAVBAR + DROPDOWN
+   7) NAVBAR + DROPDOWN
    ========================================= */
 .ds-nav {
   background: var(--ds-white);
@@ -333,8 +364,48 @@ body {
   background: rgba(180, 35, 24, 0.06);
 }
 
+/* Hover lift para chips */
+.ds-chip-hover,
+.ds-userchip,
+.ds-cart-link {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.ds-chip-hover:hover,
+.ds-userchip:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
+}
+
+/* Carrito discreto */
+.ds-cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  background: var(--ds-white);
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  color: var(--ds-primary-dark);
+}
+
+.ds-cart-link:hover {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.22);
+  transform: translateY(-2px);
+  box-shadow: var(--ds-shadow);
+}
+
+.ds-cart-link.is-active {
+  background: rgba(45, 212, 191, 0.12);
+  border-color: rgba(45, 212, 191, 0.45);
+}
+
 /* =========================================
-   7) CARDS
+   8) CARDS
    ========================================= */
 .ds-card {
   background: var(--ds-white);
@@ -351,11 +422,12 @@ body {
 }
 
 .ds-card-certification {
-  background: var(--ds-indigo);
+  background: var(--ds-primary-dark);
   color: var(--ds-white);
   border-radius: 16px;
   padding: 30px;
   text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .ds-card-course-core {
@@ -377,7 +449,7 @@ body {
 }
 
 /* =========================================
-   8) TABLES
+   9) TABLES
    ========================================= */
 .table {
   background: var(--ds-white);
@@ -453,7 +525,7 @@ body {
 }
 
 /* =========================================
-   9) MODALS
+   10) MODALS
    ========================================= */
 .ds-modal-overlay,
 .ds-modal-backdrop {
@@ -548,7 +620,7 @@ body {
 }
 
 /* =========================================
-   10) ICON BUTTONS + ACTIONS
+   11) ICON BUTTONS + ACTIONS
    ========================================= */
 .btn-icon {
   width: 34px;
@@ -583,7 +655,7 @@ body {
 }
 
 /* =========================================
-   11) FORMS
+   12) FORMS
    ========================================= */
 .ds-input,
 .ds-select {
@@ -640,7 +712,7 @@ body {
 }
 
 /* =========================================
-   12) FOOTER
+   13) FOOTER
    ========================================= */
 .ds-footer {
   background: var(--ds-primary-dark);
@@ -683,6 +755,15 @@ body {
   text-decoration: underline;
 }
 
+.ds-footer-link {
+  color: var(--ds-cta);
+  transition: color 0.2s ease;
+}
+
+.ds-footer-link:hover {
+  color: var(--ds-cta-hover);
+}
+
 .ds-footer-contact {
   white-space: nowrap;
 }
@@ -721,4 +802,55 @@ body {
     flex-basis: 100%;
     text-align: center;
   }
+}
+
+/* =========================================
+   14) CATALOG CAMPUS TOGGLE (sobre header oscuro)
+   ========================================= */
+.ds-campus-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  gap: 6px;
+}
+
+.ds-campus-toggle .btn {
+  border-radius: 999px !important;
+  border: 1px solid transparent !important;
+  padding: 8px 14px;
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.ds-campus-toggle .btn-outline-secondary {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  border-color: transparent !important;
+}
+
+.ds-campus-toggle .btn-outline-secondary:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  transform: translateY(-1px);
+}
+
+.ds-campus-toggle .btn-primary {
+  background: var(--ds-white) !important;
+  border-color: rgba(255, 255, 255, 0.65) !important;
+  color: var(--ds-primary-dark) !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.ds-campus-toggle .btn-primary:hover {
+  transform: translateY(-1px);
+}
+
+.ds-campus-toggle .btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(45, 212, 191, 0.25) !important;
 }

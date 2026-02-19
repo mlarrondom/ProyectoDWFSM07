@@ -9,6 +9,8 @@ import Login from "./pages/Login.jsx";
 import Catalog from "./pages/Catalog.jsx";
 import Help from "./pages/Help.jsx";
 import CartPage from "./pages/CartPage.jsx";
+import CheckoutPage from "./pages/CheckoutPage.jsx";
+
 
 import CertificationsAdmin from "./pages/CertificationsList.jsx";
 import CertificationsDetail from "./pages/CertificationsDetail.jsx";
@@ -99,6 +101,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+  path="/checkout"
+  element={
+    <Layout>
+      <CheckoutPage />
+    </Layout>
+  }
+/>
+
 
             {/* Alias por compatibilidad */}
             <Route path="/certifications" element={<Navigate to="/catalog" replace />} />

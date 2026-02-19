@@ -1,29 +1,23 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const auth = require('../middlewares/auth');
-const authorizeRoles = require('../middlewares/authorizeRoles');
+const auth = require("../middlewares/auth");
+const authorizeRoles = require("../middlewares/authorizeRoles");
 
-const requirementRoutes = require('./requirementRoutes');
+const requirementRoutes = require("./requirementRoutes");
 
-const {
-  getAllCertifications,
-  getCertificationByCertCode,
-  createCertification,
-  updateCertification,
-  deleteCertification,
-} = require('../controllers/certificationController');
+const certificationController = require("../controllers/certificationController");
 
 // ✅ Público
-router.get('/', getAllCertifications);
-router.get('/:certCode', getCertificationByCertCode);
+router.get("/", certificationController.getAllCertifications);
+router.get("/:certCode", certificationController.getCertificationByCertCode);
 
-// ✅ Requirements (público GET, admin resto) -> lo decide requirementRoutes
-router.use('/:certCode/requirements', requirementRoutes);
+// ✅ Requirements (público GET, admin resto)
+router.use("/:certCode/requirements", requirementRoutes);
 
 // ✅ Admin
-router.post('/', auth, authorizeRoles('admin'), createCertification);
-router.put('/:certCode', auth, authorizeRoles('admin'), updateCertification);
-router.delete('/:certCode', auth, authorizeRoles('admin'), deleteCertification);
+router.post("/", auth, authorizeRoles("admin"), certificationController.createCertification);
+router.put("/:certCode", auth, authorizeRoles("admin"), certificationController.updateCertification);
+router.delete("/:certCode", auth, authorizeRoles("admin"), certificationController.deleteCertification);
 
 module.exports = router;

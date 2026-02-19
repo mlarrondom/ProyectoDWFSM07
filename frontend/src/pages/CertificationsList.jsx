@@ -31,6 +31,7 @@ export default function CertificationsList() {
     name: "",
     campus: "Santiago",
     ownerUnit: "",
+    price: "", // ✅ nuevo
   });
 
   // Ver (solo certCode)
@@ -91,6 +92,7 @@ export default function CertificationsList() {
       name: "",
       campus: "Santiago",
       ownerUnit: "",
+      price: "", // ✅ nuevo
     });
     setOpenCreate(true);
   };
@@ -106,15 +108,26 @@ export default function CertificationsList() {
     try {
       setCreating(true);
 
+      const priceNum =
+        newCert.price === "" || newCert.price === null || newCert.price === undefined
+          ? 0
+          : Number(newCert.price);
+
       const payload = {
         certCode: Number(newCert.certCode),
         name: String(newCert.name).trim(),
         campus: String(newCert.campus).trim() || undefined,
         ownerUnit: String(newCert.ownerUnit).trim() || undefined,
+        price: Number.isFinite(priceNum) ? priceNum : undefined, // ✅ nuevo
       };
 
       if (!payload.certCode || !payload.name || !payload.ownerUnit) {
         setMsgError("Completa Código, Nombre y Unidad.");
+        return;
+      }
+
+      if (payload.price === undefined || payload.price < 0) {
+        setMsgError("Precio debe ser un número mayor o igual a 0.");
         return;
       }
 
@@ -143,7 +156,7 @@ export default function CertificationsList() {
   return (
     <div className="container py-2 ds-table-page">
       {/* Header */}
-      <div className="ds-card certs-toolbar">
+      <div className="certs-toolbar">
         <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
           <div>
             <h2 className="m-0 certs-title">Certificaciones - Mantenedor</h2>
@@ -238,7 +251,6 @@ export default function CertificationsList() {
             <div className="ds-modal-header">
               <h5 className="ds-modal-title m-0">Nueva Certificación</h5>
 
-              {/* ✅ Cerrar con ícono X */}
               <button
                 type="button"
                 onClick={closeCreateModal}
@@ -263,7 +275,7 @@ export default function CertificationsList() {
                     />
                   </div>
 
-                  <div className="col-md-9">
+                  <div className="col-md-6">
                     <label className="form-label ds-label">Nombre</label>
                     <input
                       className="form-control certs-input"
@@ -276,9 +288,24 @@ export default function CertificationsList() {
                     />
                   </div>
 
+                  {/* ✅ NUEVO: Precio */}
+                  <div className="col-md-3">
+                    <label className="form-label ds-label">Precio</label>
+                    <input
+                      className="form-control certs-input"
+                      type="number"
+                      min="0"
+                      step="1"
+                      placeholder="Ej: 99000"
+                      value={newCert.price}
+                      onChange={(e) =>
+                        setNewCert((p) => ({ ...p, price: e.target.value }))
+                      }
+                    />
+                  </div>
+
                   <div className="col-md-4">
                     <label className="form-label ds-label">Campus</label>
-                    {/* ✅ ds-select para look del design system */}
                     <select
                       className="form-select ds-select certs-select"
                       value={newCert.campus}
@@ -293,7 +320,6 @@ export default function CertificationsList() {
 
                   <div className="col-md-8">
                     <label className="form-label ds-label">Unidad</label>
-                    {/* ✅ Unidad como desplegable según enum del modelo */}
                     <select
                       className="form-select ds-select certs-select"
                       value={newCert.ownerUnit}
@@ -315,7 +341,6 @@ export default function CertificationsList() {
                 </div>
               </div>
 
-              {/* ✅ Footer estándar */}
               <div className="ds-modal-footer">
                 <button
                   type="button"
@@ -350,7 +375,6 @@ export default function CertificationsList() {
                 Certificación {selectedCertCode}
               </h5>
 
-              {/* ✅ Cerrar con ícono X */}
               <button
                 type="button"
                 onClick={closeViewModal}

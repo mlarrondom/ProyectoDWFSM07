@@ -239,7 +239,7 @@ export default function CoursesList() {
 
   return (
     <div className="container py-2 ds-table-page">
-      <div className="ds-card courses-toolbar">
+      <div className="courses-toolbar">
         <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
           <div>
             <h2 className="m-0 courses-title">Cursos - Mantenedor</h2>

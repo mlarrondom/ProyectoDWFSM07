@@ -1,7 +1,7 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import logo from "/logo.svg"; // public
+import logo from "/logo.svg";
 import Footer from "./Footer";
 import CartIcon from "./CartIcon";
 
@@ -44,31 +44,37 @@ export default function Layout({ children }) {
   }, [location.pathname]);
 
   return (
-    <>
+    <div className="ds-layout">
       <nav className="ds-nav">
         <div className="container-fluid ds-nav-inner">
-          {/* Brand */}
           <Link to="/" className="ds-brand">
             <img src={logo} alt="Certify Logo" style={{ height: "40px" }} />
           </Link>
 
-          {/* Menú */}
           <div className="ds-nav-links">
-            <NavLink to="/" className={({ isActive }) => `ds-navlink ${isActive ? "is-active" : ""}`}>
+            <NavLink
+              to="/"
+              className={({ isActive }) => `ds-navlink ${isActive ? "is-active" : ""}`}
+            >
               Inicio
             </NavLink>
 
-            <NavLink to="/catalog" className={({ isActive }) => `ds-navlink ${isActive ? "is-active" : ""}`}>
+            <NavLink
+              to="/catalog"
+              className={({ isActive }) => `ds-navlink ${isActive ? "is-active" : ""}`}
+            >
               Catálogo
             </NavLink>
 
-            <NavLink to="/help" className={({ isActive }) => `ds-navlink ${isActive ? "is-active" : ""}`}>
+            <NavLink
+              to="/help"
+              className={({ isActive }) => `ds-navlink ${isActive ? "is-active" : ""}`}
+            >
               Ayuda
             </NavLink>
 
             <CartIcon />
 
-            {/* Mantenedores SOLO internos */}
             {isLogged && isInternalUser && (
               <div className="ds-dropdown">
                 <button
@@ -82,7 +88,11 @@ export default function Layout({ children }) {
 
                 {openMaintainers && (
                   <div className="ds-menu ds-menu-right">
-                    <NavLink to="/admin/courses" onClick={() => setOpenMaintainers(false)} className="ds-menu-item">
+                    <NavLink
+                      to="/admin/courses"
+                      onClick={() => setOpenMaintainers(false)}
+                      className="ds-menu-item"
+                    >
                       Cursos
                     </NavLink>
 
@@ -98,9 +108,11 @@ export default function Layout({ children }) {
               </div>
             )}
 
-            {/* Sesión (chip + dropdown) */}
             {!isLogged ? (
-              <NavLink to="/login" className="ds-chip-link d-flex align-items-center justify-content-between">
+              <NavLink
+                to="/login"
+                className="ds-chip-link ds-chip-hover d-flex align-items-center justify-content-between"
+              >
                 Ingresar <i className="bi bi-box-arrow-in-right ms-2"></i>
               </NavLink>
             ) : (
@@ -140,10 +152,9 @@ export default function Layout({ children }) {
         </div>
       </nav>
 
-      <main className="container-xxl my-4">{children}</main>
+      <main className="ds-content container-xxl my-4">{children}</main>
 
-      {/* Footer global */}
       <Footer />
-    </>
+    </div>
   );
 }

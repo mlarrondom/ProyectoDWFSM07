@@ -15,9 +15,6 @@ export default function Footer() {
           <div className="col-12 col-md-4 mb-3 mb-md-0">
             <div className="d-flex justify-content-center justify-content-md-start align-items-center gap-2">
               <img src={logo} alt="CERTIFY" style={{ height: 38 }} />
-              <span className="fw-bold ds-text-primary">
-                CERTIFY
-              </span>
             </div>
           </div>
 
@@ -27,21 +24,21 @@ export default function Footer() {
               
               <NavLink
                 to="/"
-                className="text-decoration-none fw-semibold ds-text-primary"
+                className="text-decoration-none fw-semibold ds-footer-link"
               >
                 Inicio
               </NavLink>
 
               <NavLink
                 to="/catalog"
-                className="text-decoration-none fw-semibold ds-text-primary"
+                className="text-decoration-none fw-semibold ds-footer-link"
               >
                 Catálogo
               </NavLink>
 
               <NavLink
                 to="/help"
-                className="text-decoration-none fw-semibold ds-text-primary"
+                className="text-decoration-none fw-semibold ds-footer-link"
               >
                 Ayuda
               </NavLink>
@@ -55,7 +52,7 @@ export default function Footer() {
               
               <Link
                 to="/help"
-                className="btn ds-btn-primary"
+                className="btn btn-outline-secondary"
                 style={{ borderRadius: 8 }}
               >
                 Contáctanos <i className="bi bi-envelope ms-2"></i>
