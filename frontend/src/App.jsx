@@ -10,6 +10,9 @@ import Catalog from "./pages/Catalog.jsx";
 import Help from "./pages/Help.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
+import PaymentSuccess from "./pages/PaymentSuccess.jsx";
+import PaymentFailure from "./pages/PaymentFailure.jsx";
+import PaymentPending from "./pages/PaymentPending.jsx";
 
 
 import CertificationsAdmin from "./pages/CertificationsList.jsx";
@@ -107,6 +110,33 @@ function App() {
   element={
     <Layout>
       <CheckoutPage />
+    </Layout>
+  }
+/>
+
+<Route
+  path="/payment/success"
+  element={
+    <Layout>
+      <PaymentSuccess />
+    </Layout>
+  }
+/>
+
+<Route
+  path="/payment/failure"
+  element={
+    <Layout>
+      <PaymentFailure />
+    </Layout>
+  }
+/>
+
+<Route
+  path="/payment/pending"
+  element={
+    <Layout>
+      <PaymentPending />
     </Layout>
   }
 />

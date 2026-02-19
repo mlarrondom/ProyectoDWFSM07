@@ -1,0 +1,112 @@
+// src/controllers/payments.controller.js (CommonJS - require)
+
+const { MercadoPagoConfig, Preference } = require("mercadopago");
+
+// helpers
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(String(email || "").trim());
+}
+
+function normalizeChilePhone(input) {
+  const raw = String(input || "").trim();
+  const cleaned = raw.replace(/[^\d+]/g, "");
+
+  if (/^\+56\d{9}$/.test(cleaned)) return cleaned;
+  if (/^56\d{9}$/.test(cleaned)) return `+${cleaned}`;
+  if (/^9\d{8}$/.test(cleaned)) return `+56${cleaned}`;
+
+  return null;
+}
+
+function getFrontUrl() {
+  const frontUrl = process.env.FRONT_URL;
+
+  if (!frontUrl) {
+    throw new Error("Falta FRONT_URL en variables de entorno (ej: http://localhost:5173)");
+  }
+
+  // limpieza extra: quita espacios y slash final
+  return String(frontUrl).trim().replace(/\/$/, "");
+}
+
+function getMPClient() {
+  const accessToken = process.env.MP_ACCESS_TOKEN;
+  if (!accessToken) {
+    throw new Error("Falta MP_ACCESS_TOKEN en variables de entorno (sandbox)");
+  }
+  return new MercadoPagoConfig({ accessToken });
+}
+
+async function createPreference(req, res) {
+  try {
+    const { items, buyer } = req.body || {};
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: "Carrito vacío o inválido." });
+    }
+
+    const fullName = String(buyer?.fullName || "").trim();
+    const email = String(buyer?.email || "").trim();
+    const phoneNormalized = normalizeChilePhone(buyer?.phone);
+
+    if (fullName.length < 5) return res.status(400).json({ message: "Nombre completo inválido." });
+    if (!isValidEmail(email)) return res.status(400).json({ message: "Email inválido." });
+    if (!phoneNormalized) return res.status(400).json({ message: "Teléfono Chile inválido." });
+
+    const mpItems = items.map((it) => ({
+      id: String(it.certCode),
+      title: String(it.name),
+      quantity: Number(it.quantity) > 0 ? Number(it.quantity) : 1,
+      currency_id: "CLP",
+      unit_price: Number(it.price),
+    }));
+
+    if (mpItems.some((x) => !Number.isFinite(x.unit_price) || x.unit_price <= 0)) {
+      return res.status(400).json({
+        message: "Hay ítems con precio inválido (0). Revisa el catálogo/carrito.",
+      });
+    }
+
+    const frontUrl = getFrontUrl();
+    const externalReference = `CERTIFY-${Date.now()}`;
+
+    // Debug útil (déjalo mientras estás en local)
+    console.log("FRONT_URL usado en MP:", frontUrl);
+
+    const client = getMPClient();
+    const preference = new Preference(client);
+
+    const backUrls = {
+      success: `${frontUrl}/payment/success`,
+      failure: `${frontUrl}/payment/failure`,
+      pending: `${frontUrl}/payment/pending`,
+    };
+
+    const result = await preference.create({
+      body: {
+        items: mpItems,
+        payer: { name: fullName, email },
+        back_urls: backUrls,
+        external_reference: externalReference,
+
+        // ✅ MVP: QUITAMOS auto_return para evitar validación estricta mientras ajustamos back_urls
+        // auto_return: "approved",
+      },
+    });
+
+    return res.status(200).json({
+      initPoint: result?.init_point,
+      preferenceId: result?.id,
+      externalReference,
+    });
+  } catch (error) {
+    console.error("MP createPreference error:", error);
+
+    return res.status(500).json({
+      message: "Error creando preferencia de pago.",
+      detail: String(error?.message || error),
+    });
+  }
+}
+
+module.exports = { createPreference };

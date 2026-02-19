@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const courseRoutes = require('./routes/courseRoutes');
 const certificationRoutes = require('./routes/certificationRoutes');
 const userRoutes = require('./routes/userRoutes');
+const paymentsRoutes = require('./routes/paymentsRoutes');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -53,6 +54,7 @@ app.get('/openapi.json', (req, res) => res.json(specs));
 app.use('/api/user', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/certifications', certificationRoutes);
+app.use('/api/payments', paymentsRoutes);
 
 // Ruta de salud
 app.get('/', (req, res) => {

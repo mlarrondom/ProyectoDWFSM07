@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { createPreference } from "../services/paymentsApi";
 
 const formatCLP = (n) =>
   (Number(n) || 0).toLocaleString("es-CL", {
@@ -45,24 +44,16 @@ export default function CheckoutPage() {
   const [phoneRaw, setPhoneRaw] = useState("");
 
   // control UX: no mostrar errores hasta que corresponda
-  const [touched, setTouched] = useState({
-    fullName: false,
-    email: false,
-    phone: false,
-  });
+  const [touched, setTouched] = useState({ fullName: false, email: false, phone: false });
   const [submitted, setSubmitted] = useState(false);
 
-  const phoneNormalized = useMemo(
-    () => normalizeChilePhone(phoneRaw),
-    [phoneRaw],
-  );
+  const phoneNormalized = useMemo(() => normalizeChilePhone(phoneRaw), [phoneRaw]);
 
   const errors = useMemo(() => {
     const e = {};
     if (fullName.trim().length < 5) e.fullName = "Ingresa tu nombre completo.";
     if (!isValidEmail(email)) e.email = "Ingresa un email válido.";
-    if (!phoneNormalized)
-      e.phone = "Teléfono inválido. Usa 9XXXXXXXX o +56 9XXXXXXXX.";
+    if (!phoneNormalized) e.phone = "Teléfono inválido. Usa 9XXXXXXXX o +56 9XXXXXXXX.";
     return e;
   }, [fullName, email, phoneNormalized]);
 
@@ -70,7 +61,7 @@ export default function CheckoutPage() {
 
   const showError = (field) => submitted || touched[field];
 
-  const handleSubmit = async (ev) => {
+  const handleSubmit = (ev) => {
     ev.preventDefault();
     setSubmitted(true);
 
@@ -79,20 +70,13 @@ export default function CheckoutPage() {
     const buyer = {
       fullName: fullName.trim(),
       email: email.trim(),
-      phone: phoneNormalized, // ya viene normalizado +56...
+      phone: phoneNormalized,
     };
 
-    try {
-      const payload = { items, buyer };
-      const { initPoint } = await createPreference(payload);
+    localStorage.setItem("certify_buyer_v1", JSON.stringify(buyer));
 
-      if (!initPoint) throw new Error("Mercado Pago no devolvió initPoint");
-
-      window.location.href = initPoint; // 🚀 redirige a MP sandbox
-    } catch (err) {
-      console.error(err);
-      alert(err.message || "No se pudo iniciar el pago");
-    }
+    // MVP: por ahora no redirigimos a MP. En el siguiente paso conectamos backend + MP
+    navigate("/cart", { replace: true });
   };
 
   return (
@@ -100,9 +84,7 @@ export default function CheckoutPage() {
       <div className="d-flex align-items-start justify-content-between flex-wrap gap-2">
         <div>
           <h3 className="m-0">Checkout</h3>
-          <div className="text-muted">
-            Completa tus datos para continuar con el pago.
-          </div>
+          <div className="text-muted">Completa tus datos para continuar con el pago.</div>
         </div>
 
         <Link to="/cart" className="btn btn-outline-secondary">
@@ -116,16 +98,11 @@ export default function CheckoutPage() {
 
         <div className="d-flex flex-column gap-2">
           {items.map((it) => (
-            <div
-              key={it.certCode}
-              className="d-flex justify-content-between gap-2"
-            >
+            <div key={it.certCode} className="d-flex justify-content-between gap-2">
               <div className="text-truncate">
                 <span className="fw-semibold">{it.name}</span>{" "}
                 <span className="text-muted small">({it.campus})</span>
-                {(it.quantity ?? 1) > 1 && (
-                  <span className="text-muted small"> x{it.quantity}</span>
-                )}
+                {(it.quantity ?? 1) > 1 && <span className="text-muted small"> x{it.quantity}</span>}
               </div>
               <div className="fw-semibold">
                 {formatCLP((Number(it.price) || 0) * (it.quantity ?? 1))}
@@ -199,11 +176,7 @@ export default function CheckoutPage() {
         </div>
 
         <div className="d-flex justify-content-end mt-3">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={items.length === 0}
-          >
+          <button type="submit" className="btn btn-primary" disabled={items.length === 0}>
             Continuar pago
           </button>
         </div>
