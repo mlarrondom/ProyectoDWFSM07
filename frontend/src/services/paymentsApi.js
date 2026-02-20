@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL; // ej: http://localhost:3000
+const API_BASE = import.meta.env.VITE_API_URL; // ej: http://localhost:4000
 
 export async function createPreference({ items, buyer }) {
   if (!API_BASE) throw new Error("Falta VITE_API_URL en el frontend");

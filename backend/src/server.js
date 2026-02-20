@@ -1,12 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const connectDB = require('./config/db');
 const courseRoutes = require('./routes/courseRoutes');
 const certificationRoutes = require('./routes/certificationRoutes');
 const userRoutes = require('./routes/userRoutes');
 const paymentsRoutes = require('./routes/paymentsRoutes');
+const authRoutes = require('./routes/authRoutes');
+const clientRoutes = require('./routes/clientRoutes');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -34,7 +37,7 @@ const swaggerOptions = {
         },
         security: [{ bearerAuth: [] }],
     },
-    apis: ['./src/routes/*.js'], // ajusta si tu estructura es distinta
+    apis: ['./src/routes/*.js'],
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
@@ -51,10 +54,12 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.get('/openapi.json', (req, res) => res.json(specs));
 
 // Rutas
+app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/certifications', certificationRoutes);
 app.use('/api/payments', paymentsRoutes);
+app.use('/api/clients', clientRoutes);
 
 // Ruta de salud
 app.get('/', (req, res) => {
