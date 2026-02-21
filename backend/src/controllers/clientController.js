@@ -126,8 +126,39 @@ const getMyPurchases = async (req, res) => {
     }
 };
 
+async function cancelMyPurchase(req, res) {
+    try {
+        const clientId = req.user?.id;
+        const { id } = req.params;
+
+        const transaction = await Transaction.findOne({
+            _id: id,
+            client: clientId
+        });
+
+        if (!transaction) {
+            return res.status(404).json({ msg: "Compra no encontrada." });
+        }
+
+        if (transaction.status !== "pending") {
+            return res.status(400).json({
+                msg: "Solo se pueden cancelar compras pendientes."
+            });
+        }
+
+        transaction.status = "cancelled";
+        await transaction.save();
+
+        return res.json({ msg: "Compra cancelada correctamente." });
+    } catch (error) {
+        console.error("cancelMyPurchase error:", error);
+        return res.status(500).json({ msg: "Error cancelando compra." });
+    }
+}
+
 module.exports = {
     getMe,
     updateMe,
-    getMyPurchases
+    getMyPurchases,
+    cancelMyPurchase
 };

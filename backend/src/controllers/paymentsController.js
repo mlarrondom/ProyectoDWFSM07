@@ -70,9 +70,15 @@ async function createPreference(req, res) {
         const email = String(buyer?.email || '').trim().toLowerCase();
         const phoneNormalized = normalizeChilePhone(buyer?.phone);
 
-        if (fullName.length < 5) return res.status(400).json({ message: 'Nombre completo inválido.' });
-        if (!isValidEmail(email)) return res.status(400).json({ message: 'Email inválido.' });
-        if (!phoneNormalized) return res.status(400).json({ message: 'Teléfono Chile inválido.' });
+        if (fullName.length < 5) {
+            return res.status(400).json({ message: 'Nombre completo inválido.' });
+        }
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ message: 'Email inválido.' });
+        }
+        if (!phoneNormalized) {
+            return res.status(400).json({ message: 'Teléfono Chile inválido.' });
+        }
 
         const mpItems = items.map((it) => ({
             id: String(it.certCode),
@@ -96,19 +102,31 @@ async function createPreference(req, res) {
         const client = getMPClient();
         const preference = new Preference(client);
 
+        const successUrl = `${frontUrl}/payment/success`;
+        const failureUrl = `${frontUrl}/payment/failure`;
+        const pendingUrl = `${frontUrl}/payment/pending`;
+
         const backUrls = {
-            success: `${frontUrl}/payment/success`,
-            failure: `${frontUrl}/payment/failure`,
-            pending: `${frontUrl}/payment/pending`
+            success: successUrl,
+            failure: failureUrl,
+            pending: pendingUrl
         };
 
         const result = await preference.create({
             body: {
                 items: mpItems,
                 payer: { name: fullName, email },
+
+                // Retornos (algunos flujos no muestran "Volver al sitio" en local)
                 back_urls: backUrls,
+
+                // Mejora compatibilidad con distintos flujos de checkout
+                redirect_urls: backUrls,
+
+                // En localhost (http) evitar auto_return por restricción HTTPS
+                // auto_return: 'approved',
+
                 external_reference: externalReference
-                // auto_return: "approved",
             }
         });
 
@@ -141,13 +159,54 @@ async function createPreference(req, res) {
             externalReference
         });
     } catch (error) {
-        console.error('MP createPreference error:', error);
+        console.error('MP createPreference error:', {
+            message: error?.message,
+            status: error?.status,
+            cause: error?.cause,
+            response: error?.response?.data
+        });
 
         return res.status(500).json({
             message: 'Error creando preferencia de pago.',
-            detail: String(error?.message || error)
+            detail: error?.response?.data || error?.cause || String(error?.message || error)
         });
     }
 }
 
-module.exports = { createPreference };
+async function verifyPayment(req, res) {
+    try {
+        const { external_reference, payment_id, status } = req.query;
+
+        if (!external_reference) {
+            return res.status(400).json({ message: 'external_reference requerido.' });
+        }
+
+        const transaction = await Transaction.findOne({
+            'mp.externalReference': external_reference
+        });
+
+        if (!transaction) {
+            return res.status(404).json({ message: 'Transacción no encontrada.' });
+        }
+
+        if (payment_id) {
+            transaction.mp.paymentId = String(payment_id);
+        }
+
+        if (status && ['approved', 'pending', 'rejected'].includes(status)) {
+            transaction.status = status;
+        }
+
+        await transaction.save();
+
+        return res.json({
+            status: transaction.status,
+            transactionId: transaction._id
+        });
+    } catch (error) {
+        console.error('verifyPayment error:', error);
+        return res.status(500).json({ message: 'Error verificando pago.' });
+    }
+}
+
+module.exports = { createPreference, verifyPayment };

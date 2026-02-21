@@ -5,20 +5,24 @@ export default function CartIcon() {
   const { totalCount } = useCart();
 
   return (
-    <NavLink
-      to="/cart"
-      className={({ isActive }) =>
-        `ds-cart-link d-flex align-items-center justify-content-between ${isActive ? "is-active" : ""}`
-      }
-      title="Carrito"
-    >
-      Carrito <i className="bi bi-cart3 ms-2"></i>
+<NavLink
+  to="/cart"
+  className={({ isActive }) =>
+    `ds-cart-link position-relative d-inline-flex align-items-center ${isActive ? "is-active" : ""}`
+  }
+  title="Carrito"
+>
+  <i className="bi bi-cart3 fs-5"></i>
 
-      {totalCount > 0 && (
-        <span className="badge text-bg-light ms-2" aria-label={`Productos en carrito: ${totalCount}`}>
-          {totalCount}
-        </span>
-      )}
-    </NavLink>
+  {totalCount > 0 && (
+    <span
+      className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+      aria-label={`Productos en carrito: ${totalCount}`}
+      style={{ fontSize: "0.65rem" }}
+    >
+      {totalCount}
+    </span>
+  )}
+</NavLink>
   );
 }

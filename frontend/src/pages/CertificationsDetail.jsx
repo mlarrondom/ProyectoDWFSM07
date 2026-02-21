@@ -700,13 +700,301 @@ export default function CertificationsDetail({ certCode, onUpdated }) {
 
       <hr className="my-4" />
 
-      {/* =========================
-          REQUERIMIENTOS (sin cambios)
+{/* =========================
+          REQUERIMIENTOS
          ========================= */}
-      {/* ... tu tabla de requerimientos queda igual ... */}
-      {/* (para ahorrar scroll, dejé todo lo demás tal cual lo tenías) */}
+      <div className="d-flex align-items-center justify-content-between mb-2">
+        <h6 style={{ fontWeight: 900, margin: 0 }}>Requerimientos</h6>
 
-      {/* ⬇️ pega aquí el resto del JSX de requerimientos exactamente como ya lo tenías */}
+        {/* Opción B: link discreto que activa fila al final */}
+        {!addingReq && editingReqId === null && (
+          <button
+            type="button"
+            className="btn btn-link d-inline-flex align-items-center gap-2 ds-add-link"
+            onClick={startAddRequirement}
+            title="Agregar requerimiento"
+          >
+            <span>Agregar requerimiento</span>
+            <i className="bi bi-plus-lg"></i>
+          </button>
+        )}
+      </div>
+
+      {loadingReq ? (
+        <div className="alert alert-secondary">Cargando requerimientos...</div>
+      ) : (
+        <div className="table-responsive">
+          <table className="table table-hover align-middle w-100 ds-req-table">
+            <thead className="table-light">
+              <tr>
+                <th className="text-center" style={{ width: 110 }}>
+                  Grupo
+                </th>
+                <th className="text-center" style={{ width: 200 }}>
+                  Tipo
+                </th>
+                <th className="text-center">Valor</th>
+                <th className="text-center" style={{ width: 180 }}>
+                  Condición
+                </th>
+                <th className="text-center" style={{ width: 140 }}>
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {requirements.map((r) => {
+                const isEditingRow = editingReqId === r.requirementId;
+
+                return (
+                  <tr key={r.requirementId}>
+                    <td className="text-center" style={{ fontWeight: 800 }}>
+                      {r.group}
+                    </td>
+
+                    <td className="text-left">{typeLabel(r.type)}</td>
+
+                    <td>
+                      {!isEditingRow ? (
+                        renderReqValue(r)
+                      ) : r.type === "CREDITS" ? (
+                        <input
+                          className="form-control ds-input"
+                          type="number"
+                          min="0"
+                          value={editReqForm.creditsRequired}
+                          onChange={(e) =>
+                            setEditReqForm((p) => ({
+                              ...p,
+                              creditsRequired: e.target.value,
+                            }))
+                          }
+                        />
+                      ) : (
+                        <>
+                          <input
+                            className="form-control ds-input"
+                            list="courses-datalist-edit"
+                            placeholder="Escribe código o nombre del curso..."
+                            value={editReqForm.courseInput}
+                            onChange={(e) =>
+                              setEditReqForm((p) => ({
+                                ...p,
+                                courseInput: e.target.value,
+                              }))
+                            }
+                            disabled={loadingCourses}
+                          />
+                          <datalist id="courses-datalist-edit">
+                            {datalistOptions.map((o) => (
+                              <option key={o.key} value={o.value}>
+                                {o.label}
+                              </option>
+                            ))}
+                          </datalist>
+                        </>
+                      )}
+                    </td>
+
+                    <td className="text-left">{conditionLabel(r.condition)}</td>
+
+                    <td className="text-center">
+                      {!isEditingRow ? (
+                        <div className="d-inline-flex gap-2">
+                          <button
+                            type="button"
+                            className="btn btn-link btn-ghost btn-icon d-inline-flex align-items-center justify-content-center"
+                            onClick={() => startEditRequirement(r)}
+                            title="Editar requerimiento"
+                          >
+                            <i className="bi bi-pencil-square"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            className="btn btn-link btn-ghost btn-icon text-danger d-inline-flex align-items-center justify-content-center"
+                            onClick={() => handleDeleteRequirement(r.requirementId)}
+                            title="Eliminar requerimiento"
+                          >
+                            <i className="bi bi-trash3"></i>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="d-inline-flex gap-2">
+                          <button
+                            type="button"
+                            className="btn btn-link btn-ghost btn-icon d-inline-flex align-items-center justify-content-center"
+                            onClick={cancelEditRequirement}
+                            title="Cancelar"
+                            disabled={savingEditReq}
+                          >
+                            <i className="bi bi-x-lg"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            className="btn btn-link btn-ghost btn-icon d-inline-flex align-items-center justify-content-center"
+                            onClick={() => saveEditRequirement(r.requirementId)}
+                            title="Guardar"
+                            disabled={savingEditReq}
+                          >
+                            <i className="bi bi-check2"></i>
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {requirements.length === 0 && !addingReq && (
+                <tr>
+                  <td colSpan={5} className="text-muted">
+                    Esta certificación no tiene requerimientos aún.
+                  </td>
+                </tr>
+              )}
+
+              {/* Add row (al final) */}
+              {addingReq && (
+                <tr>
+                  <td className="text-center">
+                    <select
+                      className="form-select ds-select"
+                      value={reqForm.group}
+                      onChange={(e) =>
+                        setReqForm((p) => ({
+                          ...p,
+                          group: Number(e.target.value),
+                        }))
+                      }
+                      disabled={reqForm.type === "CREDITS"}
+                    >
+                      <option value={1}>1</option>
+                      <option value={2}>2</option>
+                      <option value={3}>3</option>
+                    </select>
+                  </td>
+
+                  <td className="text-center">
+                    <select
+                      className="form-select ds-select"
+                      value={reqForm.type}
+                      onChange={(e) => {
+                        const nextType = e.target.value;
+                        setReqForm((p) => ({
+                          ...p,
+                          type: nextType,
+                          group: nextType === "CREDITS" ? 1 : p.group,
+                          condition: nextType === "CREDITS" ? "Y" : p.condition,
+                          creditsRequired: "",
+                          courseInput: "",
+                        }));
+                      }}
+                    >
+                      {TYPE_OPTIONS.map((t) => (
+                        <option key={t.value} value={t.value}>
+                          {t.label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+
+                  <td>
+                    {reqForm.type === "CREDITS" ? (
+                      <input
+                        className="form-control ds-input"
+                        type="number"
+                        min="0"
+                        placeholder="Ej: 24"
+                        value={reqForm.creditsRequired}
+                        onChange={(e) =>
+                          setReqForm((p) => ({
+                            ...p,
+                            creditsRequired: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      <>
+                        <input
+                          className="form-control ds-input"
+                          list="courses-datalist-add"
+                          placeholder="Escribe código o nombre del curso..."
+                          value={reqForm.courseInput}
+                          onChange={(e) =>
+                            setReqForm((p) => ({
+                              ...p,
+                              courseInput: e.target.value,
+                            }))
+                          }
+                          disabled={loadingCourses}
+                        />
+                        <datalist id="courses-datalist-add">
+                          {datalistOptions.map((o) => (
+                            <option key={o.key} value={o.value}>
+                              {o.label}
+                            </option>
+                          ))}
+                        </datalist>
+
+                        {courses.length === 0 && !loadingCourses && (
+                          <div className="text-muted mt-2" style={{ fontSize: 12 }}>
+                            No se pudieron cargar cursos (o tu rol no tiene acceso).
+                            Puedes escribir el código exacto igualmente.
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </td>
+
+                  <td className="text-center">
+                    <select
+                      className="form-select ds-select"
+                      value={reqForm.condition}
+                      onChange={(e) =>
+                        setReqForm((p) => ({ ...p, condition: e.target.value }))
+                      }
+                      disabled={reqForm.type === "CREDITS"}
+                      title={
+                        reqForm.type === "CREDITS"
+                          ? 'Créditos siempre es "Obligatorio"'
+                          : "Selecciona condición"
+                      }
+                    >
+                      <option value="Y">Obligatorio</option>
+                      <option value="O">Electivo</option>
+                    </select>
+                  </td>
+
+                  <td className="text-center">
+                    <div className="d-inline-flex gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={cancelAddRequirement}
+                        disabled={savingReq}
+                      >
+                        Cancelar
+                      </button>
+
+                      <button
+                        type="button"
+                        className="btn btn-primary d-inline-flex align-items-center gap-2"
+                        onClick={saveAddRequirement}
+                        disabled={savingReq}
+                      >
+                        <span>{savingReq ? "Guardando..." : "Guardar"}</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

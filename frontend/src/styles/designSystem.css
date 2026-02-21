@@ -854,3 +854,88 @@ body {
 .ds-campus-toggle .btn:focus {
   box-shadow: 0 0 0 0.2rem rgba(45, 212, 191, 0.25) !important;
 }
+
+.ds-campus-toggle {
+    background: #f1f5f9;
+    border: 1px solid var(--ds-border);
+    border-radius: 999px;
+    padding: 6px;
+    gap: 6px;
+    box-shadow: var(--ds-shadow);
+}
+
+.ds-campus-toggle .btn {
+    border-radius: 999px !important;
+    border: none;
+    flex: 1;
+    padding: 8px 14px;
+    font-weight: 700;
+}
+
+.ds-campus-toggle .btn.btn-cta {
+    color: #ffffff !important;
+}
+
+.ds-campus-toggle .btn.btn-outline-secondary {
+    background: transparent;
+}
+
+.ds-chip-outline {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;              /* 👈 mismo padding que ds-chip-link */
+  border-radius: 999px;           /* 👈 mismo radio */
+  border: 1px solid var(--ds-primary-dark);
+  text-decoration: none;
+  color: var(--ds-primary-dark);  /* 👈 texto oscuro */
+  font-weight: 700;               /* 👈 mismo peso */
+  background: var(--ds-white);    /* 👈 fondo blanco */
+}
+
+/* Toggle container (pill) */
+.ds-campus-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16); /* sobre hero oscuro */
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.22);
+}
+
+/* base option */
+.ds-campus-option {
+  appearance: none;
+  border: 1px solid rgba(203, 213, 225, 0.9); /* --ds-border */
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ds-primary-dark);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* hover similar al DS */
+.ds-campus-option:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.18);
+  border-color: rgba(45, 212, 191, 0.7); /* --ds-cta */
+}
+
+/* active = menta */
+.ds-campus-option.is-active {
+  background: var(--ds-cta);
+  border-color: var(--ds-cta);
+  color: var(--ds-primary-dark);
+  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.22);
+}
+
+/* focus accesible */
+.ds-campus-option:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.35);
+}

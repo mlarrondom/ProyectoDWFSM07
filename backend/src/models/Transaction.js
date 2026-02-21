@@ -5,62 +5,62 @@ const transactionSchema = new mongoose.Schema(
         client: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Client',
-            default: null
+            default: null,
         },
         buyer: {
             fullName: {
                 type: String,
-                required: true
+                required: true,
             },
             email: {
                 type: String,
-                required: true
+                required: true,
             },
             phone: {
                 type: String,
-                required: true
-            }
+                required: true,
+            },
         },
         items: [
             {
                 certCode: {
                     type: String,
-                    required: true
+                    required: true,
                 },
                 name: {
                     type: String,
-                    required: true
+                    required: true,
                 },
                 price: {
                     type: Number,
-                    required: true
+                    required: true,
                 },
                 quantity: {
                     type: Number,
                     required: true,
                     min: 1,
-                    default: 1
-                }
-            }
+                    default: 1,
+                },
+            },
         ],
         amount: {
             type: Number,
-            required: true
+            required: true,
         },
         status: {
             type: String,
-            enum: ['pending', 'approved', 'rejected'],
-            default: 'pending'
+            enum: ['pending', 'approved', 'rejected', 'cancelled'],
+            default: 'pending',
         },
         mp: {
             preferenceId: String,
             externalReference: String,
-            paymentId: String
-        }
+            paymentId: String,
+        },
     },
     {
-        timestamps: true
-    }
+        timestamps: true,
+    },
 );
 
 module.exports = mongoose.model('Transaction', transactionSchema);

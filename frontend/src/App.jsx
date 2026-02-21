@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { ClientAuthProvider } from "./context/ClientAuthContext";
 import { CartProvider } from "./context/CartContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
@@ -14,144 +15,183 @@ import PaymentSuccess from "./pages/PaymentSuccess.jsx";
 import PaymentFailure from "./pages/PaymentFailure.jsx";
 import PaymentPending from "./pages/PaymentPending.jsx";
 
-
 import CertificationsAdmin from "./pages/CertificationsList.jsx";
 import CertificationsDetail from "./pages/CertificationsDetail.jsx";
 import CoursesList from "./pages/CoursesList.jsx";
 
+import ClientLogin from "./pages/Login.jsx";
+import ClientSignup from "./pages/Signup.jsx";
+import MyProfile from "./pages/MyProfile.jsx";
+import ClientProtectedRoute from "./components/ClientProtectedRoute.jsx";
+
 function App() {
-  return (
-    <AuthProvider>
-      <CartProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Público (con navbar + footer) */}
-            <Route
-              path="/"
-              element={
-                <Layout>
-                  <Home />
-                </Layout>
-              }
-            />
+    return (
+        <AuthProvider>
+            <ClientAuthProvider>
+                <CartProvider>
+                    <BrowserRouter>
+                        <Routes>
+                            {/* Público (con navbar + footer) */}
+                            <Route
+                                path="/"
+                                element={
+                                    <Layout>
+                                        <Home />
+                                    </Layout>
+                                }
+                            />
 
-            <Route
-              path="/login"
-              element={
-                <Layout>
-                  <Login />
-                </Layout>
-              }
-            />
+                            {/* Admin login (se mantiene) */}
+                            <Route
+                                path="/login"
+                                element={
+                                    <Layout>
+                                        <Login />
+                                    </Layout>
+                                }
+                            />
 
-            <Route
-              path="/catalog"
-              element={
-                <Layout>
-                  <Catalog />
-                </Layout>
-              }
-            />
+                            {/* Cliente auth */}
+                            <Route
+                                path="/client/login"
+                                element={
+                                    <Layout>
+                                        <ClientLogin />
+                                    </Layout>
+                                }
+                            />
 
-            <Route
-              path="/cart"
-              element={
-                <Layout>
-                  <CartPage />
-                </Layout>
-              }
-            />
+                            <Route
+                                path="/signup"
+                                element={
+                                    <Layout>
+                                        <ClientSignup />
+                                    </Layout>
+                                }
+                            />
 
-            <Route
-              path="/help"
-              element={
-                <Layout>
-                  <Help />
-                </Layout>
-              }
-            />
+                            <Route
+                                path="/me"
+                                element={
+                                    <ClientProtectedRoute>
+                                        <Layout>
+                                            <MyProfile />
+                                        </Layout>
+                                    </ClientProtectedRoute>
+                                }
+                            />
 
-            {/* Admin (privado) */}
-            <Route
-              path="/admin/certifications"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <CertificationsAdmin />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
+                            <Route
+                                path="/catalog"
+                                element={
+                                    <Layout>
+                                        <Catalog />
+                                    </Layout>
+                                }
+                            />
 
-            <Route
-              path="/admin/certifications/:certCode"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <CertificationsDetail />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
+                            <Route
+                                path="/cart"
+                                element={
+                                    <Layout>
+                                        <CartPage />
+                                    </Layout>
+                                }
+                            />
 
-            <Route
-              path="/admin/courses"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <CoursesList />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
+                            <Route
+                                path="/help"
+                                element={
+                                    <Layout>
+                                        <Help />
+                                    </Layout>
+                                }
+                            />
 
-            <Route
-  path="/checkout"
-  element={
-    <Layout>
-      <CheckoutPage />
-    </Layout>
-  }
-/>
+                            {/* Admin (privado) */}
+                            <Route
+                                path="/admin/certifications"
+                                element={
+                                    <ProtectedRoute>
+                                        <Layout>
+                                            <CertificationsAdmin />
+                                        </Layout>
+                                    </ProtectedRoute>
+                                }
+                            />
 
-<Route
-  path="/payment/success"
-  element={
-    <Layout>
-      <PaymentSuccess />
-    </Layout>
-  }
-/>
+                            <Route
+                                path="/admin/certifications/:certCode"
+                                element={
+                                    <ProtectedRoute>
+                                        <Layout>
+                                            <CertificationsDetail />
+                                        </Layout>
+                                    </ProtectedRoute>
+                                }
+                            />
 
-<Route
-  path="/payment/failure"
-  element={
-    <Layout>
-      <PaymentFailure />
-    </Layout>
-  }
-/>
+                            <Route
+                                path="/admin/courses"
+                                element={
+                                    <ProtectedRoute>
+                                        <Layout>
+                                            <CoursesList />
+                                        </Layout>
+                                    </ProtectedRoute>
+                                }
+                            />
 
-<Route
-  path="/payment/pending"
-  element={
-    <Layout>
-      <PaymentPending />
-    </Layout>
-  }
-/>
+                            {/* ✅ Checkout SOLO LOGUEADOS */}
+                            <Route
+                                path="/checkout"
+                                element={
+                                    <ClientProtectedRoute>
+                                        <Layout>
+                                            <CheckoutPage />
+                                        </Layout>
+                                    </ClientProtectedRoute>
+                                }
+                            />
 
+                            <Route
+                                path="/payment/success"
+                                element={
+                                    <Layout>
+                                        <PaymentSuccess />
+                                    </Layout>
+                                }
+                            />
 
-            {/* Alias por compatibilidad */}
-            <Route path="/certifications" element={<Navigate to="/catalog" replace />} />
+                            <Route
+                                path="/payment/failure"
+                                element={
+                                    <Layout>
+                                        <PaymentFailure />
+                                    </Layout>
+                                }
+                            />
 
-            {/* Catch all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </CartProvider>
-    </AuthProvider>
-  );
+                            <Route
+                                path="/payment/pending"
+                                element={
+                                    <Layout>
+                                        <PaymentPending />
+                                    </Layout>
+                                }
+                            />
+
+                            {/* Alias por compatibilidad */}
+                            <Route path="/certifications" element={<Navigate to="/catalog" replace />} />
+
+                            {/* Catch all */}
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                        </Routes>
+                    </BrowserRouter>
+                </CartProvider>
+            </ClientAuthProvider>
+        </AuthProvider>
+    );
 }
 
 export default App;
