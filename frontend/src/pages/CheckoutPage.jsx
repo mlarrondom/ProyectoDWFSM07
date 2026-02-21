@@ -152,7 +152,7 @@ export default function CheckoutPage() {
             <div className="d-flex align-items-start justify-content-between flex-wrap gap-2">
                 <div>
                     <h3 className="m-0">Checkout</h3>
-                    <div className="text-muted">Completa tus datos para continuar con el pago.</div>
+                    <div className="text-muted">Completa tus datos para continuar con el pago</div>
                 </div>
 
                 <Link to="/cart" className="btn btn-outline-secondary">
@@ -271,9 +271,7 @@ export default function CheckoutPage() {
                     </div>
                 </div>
 
-                <div className="text-muted small mt-2">
-                    Próximo paso: conectar con Mercado Pago (sandbox) usando estos datos.
-                </div>
+
             </form>
 
             {/* Datos prueba Mercado Pago (nuevo, sin romper nada) */}

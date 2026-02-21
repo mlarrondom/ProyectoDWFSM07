@@ -8,14 +8,14 @@ const requirementRoutes = require("./requirementRoutes");
 
 const certificationController = require("../controllers/certificationController");
 
-// ✅ Público
+// Público
 router.get("/", certificationController.getAllCertifications);
 router.get("/:certCode", certificationController.getCertificationByCertCode);
 
-// ✅ Requirements (público GET, admin resto)
+// Requirements (público GET, admin resto)
 router.use("/:certCode/requirements", requirementRoutes);
 
-// ✅ Admin
+// Admin
 router.post("/", auth, authorizeRoles("admin"), certificationController.createCertification);
 router.put("/:certCode", auth, authorizeRoles("admin"), certificationController.updateCertification);
 router.delete("/:certCode", auth, authorizeRoles("admin"), certificationController.deleteCertification);

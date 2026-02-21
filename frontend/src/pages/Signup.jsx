@@ -56,9 +56,9 @@ export default function Signup() {
     };
 
     return (
-        <div className="container my-5">
-            <div className="ds-card login-card">
-                <h2 className="login-title">Crear cuenta</h2>
+        <div className="container my-5 d-flex justify-content-center">
+            <div className="ds-card p-4" style={{ maxWidth: 420, width: "100%" }}>
+                <h2 className="text-center mb-3">Crear cuenta</h2>
 
                 {error && <div className="alert alert-danger">{error}</div>}
 
@@ -96,7 +96,7 @@ export default function Signup() {
                     </div>
 
                     <div className="mb-3">
-                        <label className="form-label">Password</label>
+                        <label className="form-label">Contraseña</label>
                         <input
                             type="password"
                             className="form-control"
@@ -106,22 +106,24 @@ export default function Signup() {
                         />
                     </div>
 
-                    <button type="submit" className="btn btn-cta login-submit" disabled={submitting}>
-                        {submitting ? "Creando..." : "Crear cuenta"}
-                    </button>
-
-                    <div className="mt-3">
-                        <span className="text-muted">¿Ya tienes cuenta?</span>{" "}
-                        <button
-                            type="button"
-                            className="btn btn-link p-0 align-baseline"
-                            onClick={() => navigate("/login")}
-                            disabled={submitting}
-                        >
-                            Iniciar sesión
+                    <div className="d-flex justify-content-center">
+                        <button type="submit" className="btn btn-cta px-4" disabled={submitting}>
+                            {submitting ? "Creando..." : "Crear cuenta"}
                         </button>
                     </div>
                 </form>
+
+                <div className="text-center mt-3">
+                    <span className="text-muted">¿Ya tienes cuenta?</span>{" "}
+                    <button
+                        type="button"
+                        className="btn btn-link p-0 align-baseline"
+                        onClick={() => navigate("/login")}
+                        disabled={submitting}
+                    >
+                        Iniciar sesión
+                    </button>
+                </div>
             </div>
         </div>
     );
