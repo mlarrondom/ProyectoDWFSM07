@@ -270,8 +270,6 @@ export default function CheckoutPage() {
                         </button>
                     </div>
                 </div>
-
-
             </form>
 
             {/* Datos prueba Mercado Pago (nuevo, sin romper nada) */}

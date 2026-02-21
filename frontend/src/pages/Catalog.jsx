@@ -274,7 +274,7 @@ export default function Catalog() {
                                                         </div>
 
                                                         <div className="mt-auto pt-3 d-flex gap-2">
-                                                            {/* ✅ Abre modal */}
+                                                            {/* Abre modal */}
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-outline-secondary"

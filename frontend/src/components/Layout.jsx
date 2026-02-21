@@ -127,7 +127,7 @@ export default function Layout({ children }) {
                             </div>
                         )}
 
-                        {/* ✅ Bloque derecho: carrito + sesión */}
+                        {/* Bloque derecho: carrito + sesión */}
                         <div className="d-inline-flex align-items-center gap-2 ms-auto">
                             <CartIcon />
 

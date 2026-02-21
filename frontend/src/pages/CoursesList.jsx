@@ -326,7 +326,6 @@ export default function CoursesList() {
                         <div className="ds-modal-header">
                             <div className="ds-modal-title">Agregar curso</div>
 
-                            {/* ✅ Cerrar con ícono X */}
                             <button
                                 type="button"
                                 className="btn-close btn-close-white"
@@ -551,7 +550,6 @@ export default function CoursesList() {
                                                 </div>
                                             </div>
 
-                                            {/* ✅ Footer estándar (abajo derecha) */}
                                             <div className="ds-modal-footer">
                                                 <button
                                                     type="button"
@@ -574,7 +572,6 @@ export default function CoursesList() {
                             )}
                         </div>
 
-                        {/* Cuando NO hay editMode, no mostramos footer (solo acciones arriba) */}
                     </div>
                 </div>
             )}

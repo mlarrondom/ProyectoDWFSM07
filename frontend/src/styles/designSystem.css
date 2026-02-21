@@ -1,7 +1,7 @@
 /* =========================================
    1) FUENTE + TOKENS
    ========================================= */
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
     --ds-primary: #0d9488;
@@ -22,7 +22,7 @@
     --ds-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
     --ds-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 
-    --ds-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --ds-font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
 /* =========================================
@@ -51,7 +51,9 @@ body {
    4) UTILITIES
    ========================================= */
 .ds-lift {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .ds-lift:hover {
@@ -103,7 +105,11 @@ body {
     font-family: var(--ds-font);
     border-radius: var(--ds-radius-sm);
     font-weight: 700;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease,
         border-color 0.2s ease;
 }
 
@@ -231,7 +237,10 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .ds-navlink:hover {
@@ -357,7 +366,11 @@ body {
 .ds-chip-hover,
 .ds-userchip,
 .ds-cart-link {
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease,
         border-color 0.2s ease;
 }
 
@@ -635,7 +648,9 @@ body {
     background: transparent;
     border: none;
     color: var(--ds-text-muted);
-    transition: color 0.2s ease, transform 0.2s ease;
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .btn-ghost:hover {
@@ -692,7 +707,9 @@ body {
     text-decoration: none;
     color: var(--ds-primary-dark) !important;
     font-weight: 600;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
 }
 
 .ds-add-link:hover {
@@ -843,7 +860,11 @@ body {
     font-weight: 700;
     line-height: 1;
     flex: 1;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease,
         border-color 0.2s ease;
 }
 
@@ -892,7 +913,11 @@ body {
     font-weight: 700;
     line-height: 1;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease,
         border-color 0.2s ease;
 }
 

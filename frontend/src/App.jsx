@@ -31,7 +31,7 @@ function App() {
                 <CartProvider>
                     <BrowserRouter>
                         <Routes>
-                            {/* Público (con navbar + footer) */}
+                            
                             <Route
                                 path="/"
                                 element={
@@ -41,7 +41,6 @@ function App() {
                                 }
                             />
 
-                            {/* Admin login (se mantiene) */}
                             <Route
                                 path="/login"
                                 element={
@@ -51,7 +50,6 @@ function App() {
                                 }
                             />
 
-                            {/* Cliente auth */}
                             <Route
                                 path="/client/login"
                                 element={
@@ -108,7 +106,6 @@ function App() {
                                 }
                             />
 
-                            {/* Admin (privado) */}
                             <Route
                                 path="/admin/certifications"
                                 element={
@@ -142,7 +139,6 @@ function App() {
                                 }
                             />
 
-                            {/* ✅ Checkout SOLO LOGUEADOS */}
                             <Route
                                 path="/checkout"
                                 element={
@@ -181,10 +177,8 @@ function App() {
                                 }
                             />
 
-                            {/* Alias por compatibilidad */}
                             <Route path="/certifications" element={<Navigate to="/catalog" replace />} />
 
-                            {/* Catch all */}
                             <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>
                     </BrowserRouter>

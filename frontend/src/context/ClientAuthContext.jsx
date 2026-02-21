@@ -1,10 +1,10 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
 const ClientAuthContext = createContext();
 const API = import.meta.env.VITE_API_URL;
 
-const LS_CLIENT_TOKEN_KEY = "clientToken";
-const LS_CLIENT_KEY = "client";
+const LS_CLIENT_TOKEN_KEY = 'clientToken';
+const LS_CLIENT_KEY = 'client';
 
 export function ClientAuthProvider({ children }) {
     const [clientToken, setClientToken] = useState(() => localStorage.getItem(LS_CLIENT_TOKEN_KEY));
