@@ -92,6 +92,10 @@ export default function CartPage() {
                                 <div className="fw-bold">{formatCLP(totalPrice)}</div>
                             </div>
 
+                            <div className="text-muted small mt-2">
+                                Luego serás redirigido al checkout
+                            </div>
+
                             <Link
                                 to="/checkout"
                                 className={`btn btn-primary w-100 mt-3 ${items.length === 0 ? 'disabled' : ''}`}
