@@ -16,16 +16,36 @@ const swaggerJsdoc = require('swagger-jsdoc');
 
 const app = express();
 
+// Conexión DB
+connectDB();
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
 // Swagger config
 const swaggerOptions = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Proyecto M06 - Certifications API',
+            title: 'CERTIFY API (M07)',
             version: '1.0.0',
-            description:
-                'API REST para gestión de usuarios y certificaciones (M06)',
+            description: 'API REST para venta y gestión de certificaciones académicas (CERTIFY).',
         },
+        servers: [
+            {
+                url: process.env.API_BASE_URL || 'http://localhost:4000',
+                description: 'Servidor',
+            },
+        ],
+        tags: [
+            { name: 'Auth', description: 'Autenticación y login' },
+            { name: 'Courses', description: 'Mantenedor de cursos' },
+            { name: 'Certifications', description: 'Certificaciones académicas' },
+            { name: 'Requirements', description: 'Requerimientos por certificación' },
+            { name: 'Payments', description: 'Pagos / Mercado Pago' },
+            { name: 'Clients', description: 'Clientes' },
+        ],
         components: {
             securitySchemes: {
                 bearerAuth: {
@@ -35,21 +55,13 @@ const swaggerOptions = {
                 },
             },
         },
-        security: [{ bearerAuth: [] }],
     },
     apis: ['./src/routes/*.js'],
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
 
-// Conexión DB
-connectDB();
-
-// Middlewares
-app.use(cors());
-app.use(express.json());
-
-// Swagger routes (antes del listen)
+// Swagger routes (antes de las rutas API)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.get('/openapi.json', (req, res) => res.json(specs));
 
@@ -63,7 +75,7 @@ app.use('/api/clients', clientRoutes);
 
 // Ruta de salud
 app.get('/', (req, res) => {
-    res.send('API ProyectoM06 - Certificaciones funcionando');
+    res.send('API CERTIFY (M07) funcionando');
 });
 
 // Servidor
