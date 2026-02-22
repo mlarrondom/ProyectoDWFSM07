@@ -17,7 +17,7 @@ const {
  * @swagger
  * tags:
  *   - name: Requirements
- *     description: Requerimientos de una certificación (GET público, escritura solo admin)
+ *     description: "Requerimientos de una certificación (GET público, escritura solo admin)"
  */
 
 /**
@@ -163,7 +163,7 @@ const {
  * @swagger
  * /api/certifications/{certCode}/requirements:
  *   get:
- *     summary: Listar requerimientos de una certificación (público)
+ *     summary: "Listar requerimientos de una certificación (público)"
  *     tags: [Requirements]
  *     parameters:
  *       - in: path
@@ -174,18 +174,18 @@ const {
  *         example: 1001
  *     responses:
  *       200:
- *         description: Lista de requerimientos (formato mapeado de negocio)
+ *         description: "Lista de requerimientos (formato mapeado de negocio)"
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/RequirementsListResponse'
  *       404:
- *         description: Certificación no encontrada
+ *         description: "Certificación no encontrada"
  *       500:
- *         description: Error al obtener requisitos
+ *         description: "Error al obtener requisitos"
  *
  *   post:
- *     summary: Crear requerimiento para una certificación (solo admin)
+ *     summary: "Crear requerimiento para una certificación (solo admin)"
  *     tags: [Requirements]
  *     security:
  *       - bearerAuth: []
@@ -204,26 +204,26 @@ const {
  *             $ref: '#/components/schemas/RequirementCreateRequest'
  *     responses:
  *       201:
- *         description: Requerimiento creado
+ *         description: "Requerimiento creado"
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/RequirementCreateResponse'
  *       400:
- *         description: Error de validación o regla de negocio
+ *         description: "Error de validación o regla de negocio"
  *       404:
- *         description: Certificación no encontrada
+ *         description: "Certificación no encontrada"
  *       409:
- *         description: Conflicto (ej: crédito duplicado o curso duplicado por índice unique)
+ *         description: "Conflicto (ej: crédito duplicado o curso duplicado por índice unique)"
  *       500:
- *         description: Error al crear requisito
+ *         description: "Error al crear requisito"
  */
 
 /**
  * @swagger
  * /api/certifications/{certCode}/requirements/{requirementId}:
  *   patch:
- *     summary: Reemplazar el curso de un requisito tipo COURSE (solo admin)
+ *     summary: "Reemplazar el curso de un requisito tipo COURSE (solo admin)"
  *     tags: [Requirements]
  *     security:
  *       - bearerAuth: []
@@ -248,22 +248,22 @@ const {
  *             $ref: '#/components/schemas/RequirementReplaceCourseRequest'
  *     responses:
  *       200:
- *         description: Curso reemplazado
+ *         description: "Curso reemplazado"
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/RequirementReplaceCourseResponse'
  *       400:
- *         description: Error de validación / regla de negocio (pertenencia, tipo, cursoCode faltante, etc.)
+ *         description: "Error de validación / regla de negocio (pertenencia, tipo, courseCode faltante, etc.)"
  *       404:
- *         description: Certificación o requisito no encontrado
+ *         description: "Certificación o requisito no encontrado"
  *       409:
- *         description: Conflicto (curso ya agregado en la certificación)
+ *         description: "Conflicto (curso ya agregado en la certificación)"
  *       500:
- *         description: Error al reemplazar curso del requisito
+ *         description: "Error al reemplazar curso del requisito"
  *
  *   delete:
- *     summary: Eliminar un requerimiento por requirementId (solo admin)
+ *     summary: "Eliminar un requerimiento por requirementId (solo admin)"
  *     tags: [Requirements]
  *     security:
  *       - bearerAuth: []
@@ -282,24 +282,24 @@ const {
  *         example: "65f1c2a8b0c1a2d3e4f56789"
  *     responses:
  *       200:
- *         description: Requisito eliminado
+ *         description: "Requisito eliminado"
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/RequirementDeleteResponse'
  *       400:
- *         description: El requisito no pertenece a esta certificación
+ *         description: "El requisito no pertenece a esta certificación"
  *       404:
- *         description: Certificación o requisito no encontrado
+ *         description: "Certificación o requisito no encontrado"
  *       500:
- *         description: Error al eliminar requisito
+ *         description: "Error al eliminar requisito"
  */
 
 /**
  * @swagger
  * /api/certifications/{certCode}/requirements/{requirementId}/credits:
  *   patch:
- *     summary: Actualizar creditsRequired de un requisito tipo CREDITS (solo admin)
+ *     summary: "Actualizar creditsRequired de un requisito tipo CREDITS (solo admin)"
  *     tags: [Requirements]
  *     security:
  *       - bearerAuth: []
@@ -324,17 +324,17 @@ const {
  *             $ref: '#/components/schemas/RequirementUpdateCreditsRequest'
  *     responses:
  *       200:
- *         description: Créditos actualizados
+ *         description: "Créditos actualizados"
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/RequirementUpdateCreditsResponse'
  *       400:
- *         description: Error de validación / regla de negocio (tipo, pertenencia, creditsRequired inválido)
+ *         description: "Error de validación / regla de negocio (tipo, pertenencia, creditsRequired inválido)"
  *       404:
- *         description: Certificación o requisito no encontrado
+ *         description: "Certificación o requisito no encontrado"
  *       500:
- *         description: Error al actualizar créditos
+ *         description: "Error al actualizar créditos"
  */
 
 router.get('/', getRequirementsByCertification);

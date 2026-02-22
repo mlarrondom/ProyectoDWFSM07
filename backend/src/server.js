@@ -30,21 +30,16 @@ const swaggerOptions = {
         info: {
             title: 'CERTIFY API (M07)',
             version: '1.0.0',
-            description: 'API REST para venta y gestión de certificaciones académicas (CERTIFY).',
+            description:
+                'API REST para venta y gestión de certificaciones académicas (CERTIFY).',
         },
         servers: [
             {
-                url: process.env.API_BASE_URL || 'http://localhost:4000',
+                url:
+                    process.env.API_BASE_URL ||
+                    `http://localhost:${process.env.PORT || 4000}`,
                 description: 'Servidor',
             },
-        ],
-        tags: [
-            { name: 'Auth', description: 'Autenticación y login' },
-            { name: 'Courses', description: 'Mantenedor de cursos' },
-            { name: 'Certifications', description: 'Certificaciones académicas' },
-            { name: 'Requirements', description: 'Requerimientos por certificación' },
-            { name: 'Payments', description: 'Pagos / Mercado Pago' },
-            { name: 'Clients', description: 'Clientes' },
         ],
         components: {
             securitySchemes: {
