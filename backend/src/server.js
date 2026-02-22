@@ -36,8 +36,9 @@ const swaggerOptions = {
         servers: [
             {
                 url:
-                    process.env.API_BASE_URL ||
-                    `http://localhost:${process.env.PORT || 4000}`,
+                    process.env.NODE_ENV === 'production'
+                        ? process.env.API_BASE_URL
+                        : `http://localhost:${process.env.PORT || 4000}`,
                 description: 'Servidor',
             },
         ],
